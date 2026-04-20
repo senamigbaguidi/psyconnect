@@ -14,16 +14,128 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      expert_applications: {
+        Row: {
+          address: string
+          cabinet_name: string | null
+          created_at: string
+          description: string
+          diploma_path: string
+          expert_type: Database["public"]["Enums"]["expert_type"]
+          id: string
+          rejection_reason: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: Database["public"]["Enums"]["expert_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address: string
+          cabinet_name?: string | null
+          created_at?: string
+          description: string
+          diploma_path: string
+          expert_type: Database["public"]["Enums"]["expert_type"]
+          id?: string
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["expert_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address?: string
+          cabinet_name?: string | null
+          created_at?: string
+          description?: string
+          diploma_path?: string
+          expert_type?: Database["public"]["Enums"]["expert_type"]
+          id?: string
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["expert_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string
+          first_name: string
+          id: string
+          is_anonymous: boolean
+          last_name: string
+          phone: string | null
+          preferred_language: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          first_name: string
+          id: string
+          is_anonymous?: boolean
+          last_name: string
+          phone?: string | null
+          preferred_language?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          first_name?: string
+          id?: string
+          is_anonymous?: boolean
+          last_name?: string
+          phone?: string | null
+          preferred_language?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "patient" | "expert" | "admin"
+      expert_status: "pending" | "approved" | "rejected"
+      expert_type: "psychiatre" | "psychologue" | "coach" | "autre"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +262,10 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["patient", "expert", "admin"],
+      expert_status: ["pending", "approved", "rejected"],
+      expert_type: ["psychiatre", "psychologue", "coach", "autre"],
+    },
   },
 } as const
