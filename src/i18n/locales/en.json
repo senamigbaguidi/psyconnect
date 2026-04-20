@@ -1,0 +1,47 @@
+{
+  "brand": "PsyConnect",
+  "tagline": "An ear, an expert, within reach of your heart.",
+  "nav": { "home": "Home", "about": "About", "login": "Sign in", "signup": "Sign up", "dashboard": "Dashboard", "logout": "Sign out" },
+  "home": {
+    "heroTitle": "Speak. Be heard. Heal.",
+    "heroSub": "PsyConnect bridges people seeking emotional support with vetted experts across West Africa.",
+    "ctaPatient": "I need support",
+    "ctaExpert": "I'm a professional",
+    "f1Title": "Compassionate AI listener",
+    "f1Desc": "PsyBot welcomes you anytime, in French, English, Fon or Goun.",
+    "f2Title": "Vetted experts",
+    "f2Desc": "Every psychologist, psychiatrist or coach is manually verified by our team.",
+    "f3Title": "Private & anonymous",
+    "f3Desc": "Stay anonymous to experts if you wish. Your data is encrypted."
+  },
+  "auth": {
+    "loginTitle": "Welcome back", "loginSub": "Let's continue your journey.",
+    "signupTitle": "Join PsyConnect",
+    "email": "Email", "password": "Password", "phone": "Phone",
+    "firstName": "First name", "lastName": "Last name",
+    "anonymous": "Stay anonymous to experts",
+    "signIn": "Sign in", "signUp": "Create my account",
+    "asPatient": "Patient", "asExpert": "Expert",
+    "haveAccount": "Already have an account?", "noAccount": "No account yet?",
+    "checkEmail": "Check your email to confirm your sign up.",
+    "expertNote": "Your application will be manually reviewed by an admin."
+  },
+  "expert": {
+    "type": "Profile type", "psychiatre": "Psychiatrist", "psychologue": "Psychologist", "coach": "Motivational coach", "autre": "Other",
+    "description": "Describe your practice", "cabinet": "Practice name (optional)", "address": "Address",
+    "diploma": "Diploma or certificate (PDF/Image)", "applicationSent": "Application sent. You will be notified once reviewed.",
+    "pendingTitle": "Application pending review",
+    "pendingDesc": "Our team is reviewing your application. You'll be notified by email.",
+    "rejectedTitle": "Application rejected", "reason": "Reason"
+  },
+  "admin": {
+    "title": "Expert validations", "pending": "Pending", "approved": "Approved", "rejected": "Rejected",
+    "viewDiploma": "View diploma", "approve": "Approve", "reject": "Reject", "rejectReason": "Rejection reason"
+  },
+  "dashboard": {
+    "patientTitle": "Patient space", "patientWelcome": "Hello {{name}}, how are you feeling today?",
+    "expertTitle": "Expert space", "adminTitle": "Administration",
+    "comingSoon": "Coming soon"
+  },
+  "common": { "loading": "Loading...", "error": "An error occurred", "submit": "Submit", "cancel": "Cancel", "language": "Language" }
+}
