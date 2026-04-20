@@ -11,7 +11,7 @@ const LANGS = [
 export function LanguageSwitcher() {
   const { i18n } = useTranslation();
   return (
-    <Select value={i18n.language.split("-")[0]} onValueChange={(v) => i18n.changeLanguage(v)}>
+    <Select value={(i18n.language ?? "fr").split("-")[0]} onValueChange={(v) => i18n.changeLanguage(v)}>
       <SelectTrigger className="w-[130px] h-9 bg-card/60 backdrop-blur border-border">
         <SelectValue />
       </SelectTrigger>
