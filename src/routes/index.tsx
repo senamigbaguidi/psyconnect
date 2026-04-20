@@ -1,5 +1,4 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useTranslation } from "react-i18next";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Heart, ShieldCheck, Sparkles } from "lucide-react";
@@ -9,7 +8,6 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const { t } = useTranslation();
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
@@ -28,20 +26,20 @@ function Index() {
           <div className="mx-auto max-w-3xl text-center">
             <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-4 py-1.5 text-xs font-medium text-muted-foreground backdrop-blur">
               <Heart className="h-3.5 w-3.5 text-primary" />
-              {t("tagline")}
+              Une oreille, un expert, à portée de cœur.
             </span>
             <h1 className="mt-6 font-display text-5xl font-semibold leading-[1.05] tracking-tight md:text-7xl">
-              {t("home.heroTitle")}
+              Parler. Être écouté. Guérir.
             </h1>
             <p className="mx-auto mt-6 max-w-xl text-lg text-muted-foreground">
-              {t("home.heroSub")}
+              PsyConnect met en lien les personnes en quête de soutien psychologique et les experts validés à travers l'Afrique de l'Ouest.
             </p>
             <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
               <Button asChild size="lg" className="h-12 px-7 text-base shadow-lg">
-                <Link to="/signup" search={{ as: "patient" }}>{t("home.ctaPatient")}</Link>
+                <Link to="/signup" search={{ as: "patient" }}>Je cherche du soutien</Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="h-12 px-7 text-base">
-                <Link to="/signup" search={{ as: "expert" }}>{t("home.ctaExpert")}</Link>
+                <Link to="/signup" search={{ as: "expert" }}>Je suis un professionnel</Link>
               </Button>
             </div>
           </div>
@@ -53,20 +51,20 @@ function Index() {
         <div className="grid gap-6 md:grid-cols-3">
           <FeatureCard
             icon={<Sparkles className="h-5 w-5" />}
-            title={t("home.f1Title")}
-            desc={t("home.f1Desc")}
+            title="Écoute IA bienveillante"
+            desc="PsyBot vous accueille à toute heure, avec écoute et empathie."
             tone="primary"
           />
           <FeatureCard
             icon={<ShieldCheck className="h-5 w-5" />}
-            title={t("home.f2Title")}
-            desc={t("home.f2Desc")}
+            title="Experts validés"
+            desc="Chaque psychologue, psychiatre ou coach est vérifié manuellement par notre équipe."
             tone="secondary"
           />
           <FeatureCard
             icon={<Heart className="h-5 w-5" />}
-            title={t("home.f3Title")}
-            desc={t("home.f3Desc")}
+            title="Confidentiel & anonyme"
+            desc="Choisissez de rester anonyme face aux experts. Vos données sont chiffrées."
             tone="accent"
           />
         </div>
@@ -74,7 +72,7 @@ function Index() {
 
       <footer className="border-t border-border/60 py-8">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          © {new Date().getFullYear()} PsyConnect — {t("tagline")}
+          © {new Date().getFullYear()} PsyConnect — Une oreille, un expert, à portée de cœur.
         </div>
       </footer>
     </div>

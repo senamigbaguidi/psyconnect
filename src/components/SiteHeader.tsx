@@ -1,11 +1,8 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { useTranslation } from "react-i18next";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
-import { LanguageSwitcher } from "./LanguageSwitcher";
 
 export function SiteHeader() {
-  const { t } = useTranslation();
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
 
@@ -14,23 +11,22 @@ export function SiteHeader() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link to="/" className="flex items-center gap-2">
           <div className="h-8 w-8 rounded-full" style={{ background: "var(--gradient-warm)" }} />
-          <span className="font-display text-xl font-semibold tracking-tight">{t("brand")}</span>
+          <span className="font-display text-xl font-semibold tracking-tight">PsyConnect</span>
         </Link>
         <nav className="flex items-center gap-2">
-          <LanguageSwitcher />
           {user ? (
             <>
               <Button variant="ghost" onClick={() => navigate({ to: "/dashboard" })}>
-                {t("nav.dashboard")}
+                Tableau de bord
               </Button>
               <Button variant="outline" onClick={async () => { await signOut(); navigate({ to: "/" }); }}>
-                {t("nav.logout")}
+                Déconnexion
               </Button>
             </>
           ) : (
             <>
-              <Button variant="ghost" onClick={() => navigate({ to: "/login" })}>{t("nav.login")}</Button>
-              <Button onClick={() => navigate({ to: "/signup" })}>{t("nav.signup")}</Button>
+              <Button variant="ghost" onClick={() => navigate({ to: "/login" })}>Connexion</Button>
+              <Button onClick={() => navigate({ to: "/signup" })}>S'inscrire</Button>
             </>
           )}
         </nav>

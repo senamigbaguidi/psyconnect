@@ -1,6 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
-import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,7 +12,6 @@ export const Route = createFileRoute("/login")({
 });
 
 function LoginPage() {
-  const { t } = useTranslation();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -33,24 +31,24 @@ function LoginPage() {
       <SiteHeader />
       <div className="container mx-auto flex items-center justify-center px-4 py-16">
         <div className="w-full max-w-md rounded-2xl border border-border bg-card p-8 shadow-[var(--shadow-soft)]">
-          <h1 className="font-display text-3xl font-semibold">{t("auth.loginTitle")}</h1>
-          <p className="mt-1 text-sm text-muted-foreground">{t("auth.loginSub")}</p>
+          <h1 className="font-display text-3xl font-semibold">Bon retour</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Continuons votre parcours.</p>
           <form onSubmit={handleSubmit} className="mt-6 space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">{t("auth.email")}</Label>
+              <Label htmlFor="email">Email</Label>
               <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">{t("auth.password")}</Label>
+              <Label htmlFor="password">Mot de passe</Label>
               <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
             </div>
             <Button type="submit" className="w-full h-11" disabled={loading}>
-              {loading ? t("common.loading") : t("auth.signIn")}
+              {loading ? "Chargement..." : "Se connecter"}
             </Button>
           </form>
           <p className="mt-6 text-center text-sm text-muted-foreground">
-            {t("auth.noAccount")}{" "}
-            <Link to="/signup" className="font-medium text-primary hover:underline">{t("nav.signup")}</Link>
+            Pas encore de compte ?{" "}
+            <Link to="/signup" className="font-medium text-primary hover:underline">S'inscrire</Link>
           </p>
         </div>
       </div>

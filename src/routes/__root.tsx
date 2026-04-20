@@ -1,14 +1,7 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
-import { Suspense, lazy } from "react";
 import appCss from "../styles.css?url";
 import { AuthProvider } from "@/lib/auth-context";
 import { Toaster } from "@/components/ui/sonner";
-
-// Initialize i18n once on the client (lazy to avoid SSR window access)
-const I18nLoader = lazy(async () => {
-  await import("@/i18n");
-  return { default: () => null };
-});
 
 function NotFoundComponent() {
   return (
@@ -73,7 +66,6 @@ function RootShell({ children }: { children: React.ReactNode }) {
 function RootComponent() {
   return (
     <AuthProvider>
-      <Suspense fallback={null}><I18nLoader /></Suspense>
       <Outlet />
       <Toaster richColors position="top-right" />
     </AuthProvider>

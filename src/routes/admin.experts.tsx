@@ -1,6 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { useAuth } from "@/lib/auth-context";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -14,6 +13,13 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/admin/experts")({
   component: AdminExperts,
 });
+
+const TYPE_LABELS: Record<string, string> = {
+  psychiatre: "Psychiatre",
+  psychologue: "Psychologue",
+  coach: "Coach motivateur",
+  autre: "Autre",
+};
 
 type Application = {
   id: string;
@@ -30,7 +36,6 @@ type Application = {
 };
 
 function AdminExperts() {
-  const { t } = useTranslation();
   const { roles, loading: authLoading, user } = useAuth();
   const navigate = useNavigate();
   const [apps, setApps] = useState<Application[]>([]);
@@ -50,7 +55,7 @@ function AdminExperts() {
     if (error) { toast.error(error.message); setLoading(false); return; }
     const rows = data ?? [];
     const userIds = rows.map((r) => r.user_id);
-    let profilesById = new Map<string, { first_name: string; last_name: string; email: string }>();
+    const profilesById = new Map<string, { first_name: string; last_name: string; email: string }>();
     if (userIds.length) {
       const { data: profs } = await supabase
         .from("profiles")
@@ -76,15 +81,15 @@ function AdminExperts() {
     <div className="min-h-screen bg-background">
       <SiteHeader />
       <main className="container mx-auto px-4 py-12">
-        <h1 className="font-display text-4xl font-semibold">{t("admin.title")}</h1>
+        <h1 className="font-display text-4xl font-semibold">Validation des experts</h1>
         <Tabs defaultValue="pending" className="mt-8">
           <TabsList>
-            <TabsTrigger value="pending">{t("admin.pending")} ({pending.length})</TabsTrigger>
-            <TabsTrigger value="approved">{t("admin.approved")} ({approved.length})</TabsTrigger>
-            <TabsTrigger value="rejected">{t("admin.rejected")} ({rejected.length})</TabsTrigger>
+            <TabsTrigger value="pending">En attente ({pending.length})</TabsTrigger>
+            <TabsTrigger value="approved">Approuvés ({approved.length})</TabsTrigger>
+            <TabsTrigger value="rejected">Rejetés ({rejected.length})</TabsTrigger>
           </TabsList>
           <TabsContent value="pending" className="mt-6 space-y-4">
-            {loading ? <p className="text-muted-foreground">{t("common.loading")}</p> :
+            {loading ? <p className="text-muted-foreground">Chargement...</p> :
               pending.map((a) => <AppCard key={a.id} app={a} onChange={load} />)}
           </TabsContent>
           <TabsContent value="approved" className="mt-6 space-y-4">
@@ -100,7 +105,6 @@ function AdminExperts() {
 }
 
 function AppCard({ app, onChange, readonly }: { app: Application; onChange: () => void; readonly?: boolean }) {
-  const { t } = useTranslation();
   const { user } = useAuth();
   const [reason, setReason] = useState("");
   const [busy, setBusy] = useState(false);
@@ -120,19 +124,19 @@ function AppCard({ app, onChange, readonly }: { app: Application; onChange: () =
     const { error: e2 } = await supabase.from("user_roles").insert({ user_id: app.user_id, role: "expert" });
     setBusy(false);
     if (e2 && !e2.message.includes("duplicate")) { toast.error(e2.message); return; }
-    toast.success(t("admin.approve"));
+    toast.success("Expert approuvé");
     onChange();
   };
 
   const reject = async () => {
-    if (!reason.trim()) { toast.error(t("admin.rejectReason")); return; }
+    if (!reason.trim()) { toast.error("Veuillez indiquer un motif de rejet"); return; }
     setBusy(true);
     const { error } = await supabase.from("expert_applications").update({
       status: "rejected", rejection_reason: reason, reviewed_by: user!.id, reviewed_at: new Date().toISOString(),
     }).eq("id", app.id);
     setBusy(false);
     if (error) { toast.error(error.message); return; }
-    toast.success(t("admin.reject"));
+    toast.success("Dossier rejeté");
     onChange();
   };
 
@@ -145,23 +149,23 @@ function AppCard({ app, onChange, readonly }: { app: Application; onChange: () =
           </p>
           <p className="text-sm text-muted-foreground">{app.profiles?.email}</p>
           <div className="mt-2 flex flex-wrap gap-2">
-            <Badge variant="secondary">{t(`expert.${app.expert_type}` as const)}</Badge>
+            <Badge variant="secondary">{TYPE_LABELS[app.expert_type] ?? app.expert_type}</Badge>
             {app.cabinet_name && <Badge variant="outline">{app.cabinet_name}</Badge>}
           </div>
           <p className="mt-3 text-sm">{app.description}</p>
           <p className="mt-1 text-xs text-muted-foreground">{app.address}</p>
           {app.rejection_reason && (
-            <p className="mt-2 text-sm text-destructive">{t("expert.reason")} : {app.rejection_reason}</p>
+            <p className="mt-2 text-sm text-destructive">Motif : {app.rejection_reason}</p>
           )}
         </div>
-        <Button variant="outline" size="sm" onClick={viewDiploma}>{t("admin.viewDiploma")}</Button>
+        <Button variant="outline" size="sm" onClick={viewDiploma}>Voir le diplôme</Button>
       </div>
       {!readonly && (
         <div className="mt-5 space-y-3 border-t border-border pt-4">
-          <Textarea placeholder={t("admin.rejectReason")} value={reason} onChange={(e) => setReason(e.target.value)} />
+          <Textarea placeholder="Motif du rejet" value={reason} onChange={(e) => setReason(e.target.value)} />
           <div className="flex gap-2">
-            <Button onClick={approve} disabled={busy}>{t("admin.approve")}</Button>
-            <Button variant="destructive" onClick={reject} disabled={busy}>{t("admin.reject")}</Button>
+            <Button onClick={approve} disabled={busy}>Approuver</Button>
+            <Button variant="destructive" onClick={reject} disabled={busy}>Rejeter</Button>
           </div>
         </div>
       )}
