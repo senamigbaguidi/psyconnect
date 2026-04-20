@@ -45,10 +45,20 @@ function AdminExperts() {
     setLoading(true);
     const { data, error } = await supabase
       .from("expert_applications")
-      .select("*, profiles:profiles!expert_applications_user_id_fkey(first_name,last_name,email)")
+      .select("*")
       .order("created_at", { ascending: false });
-    if (error) toast.error(error.message);
-    setApps((data ?? []) as Application[]);
+    if (error) { toast.error(error.message); setLoading(false); return; }
+    const rows = data ?? [];
+    const userIds = rows.map((r) => r.user_id);
+    let profilesById = new Map<string, { first_name: string; last_name: string; email: string }>();
+    if (userIds.length) {
+      const { data: profs } = await supabase
+        .from("profiles")
+        .select("id,first_name,last_name,email")
+        .in("id", userIds);
+      (profs ?? []).forEach((p) => profilesById.set(p.id, { first_name: p.first_name, last_name: p.last_name, email: p.email }));
+    }
+    setApps(rows.map((r) => ({ ...r, profiles: profilesById.get(r.user_id) ?? null })) as Application[]);
     setLoading(false);
   };
 
