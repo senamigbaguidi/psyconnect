@@ -4,6 +4,9 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Fonts: warm African-inspired editorial */
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap");
+
 /*
  * Design system definition.
  *
@@ -63,38 +66,46 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.129 0.042 264.695);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.129 0.042 264.695);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
-  --primary-foreground: oklch(0.984 0.003 247.858);
-  --secondary: oklch(0.968 0.007 247.896);
-  --secondary-foreground: oklch(0.208 0.042 265.755);
-  --muted: oklch(0.968 0.007 247.896);
-  --muted-foreground: oklch(0.554 0.046 257.417);
-  --accent: oklch(0.968 0.007 247.896);
-  --accent-foreground: oklch(0.208 0.042 265.755);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(0.929 0.013 255.508);
-  --input: oklch(0.929 0.013 255.508);
-  --ring: oklch(0.704 0.04 256.788);
+  /* Warm African palette: terracotta, ocre, vert profond, crème */
+  --background: oklch(0.98 0.012 75);
+  --foreground: oklch(0.22 0.04 40);
+  --card: oklch(0.995 0.008 80);
+  --card-foreground: oklch(0.22 0.04 40);
+  --popover: oklch(0.995 0.008 80);
+  --popover-foreground: oklch(0.22 0.04 40);
+  --primary: oklch(0.55 0.16 35);          /* terracotta */
+  --primary-foreground: oklch(0.98 0.012 75);
+  --secondary: oklch(0.42 0.09 155);       /* vert profond */
+  --secondary-foreground: oklch(0.98 0.012 75);
+  --muted: oklch(0.94 0.018 75);
+  --muted-foreground: oklch(0.45 0.03 45);
+  --accent: oklch(0.78 0.13 75);           /* ocre */
+  --accent-foreground: oklch(0.22 0.04 40);
+  --destructive: oklch(0.55 0.22 25);
+  --destructive-foreground: oklch(0.98 0.012 75);
+  --border: oklch(0.88 0.02 70);
+  --input: oklch(0.88 0.02 70);
+  --ring: oklch(0.55 0.16 35);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.984 0.003 247.858);
-  --sidebar-foreground: oklch(0.129 0.042 264.695);
-  --sidebar-primary: oklch(0.208 0.042 265.755);
-  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-accent: oklch(0.968 0.007 247.896);
-  --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
-  --sidebar-border: oklch(0.929 0.013 255.508);
-  --sidebar-ring: oklch(0.704 0.04 256.788);
+  --sidebar: oklch(0.96 0.018 75);
+  --sidebar-foreground: oklch(0.22 0.04 40);
+  --sidebar-primary: oklch(0.55 0.16 35);
+  --sidebar-primary-foreground: oklch(0.98 0.012 75);
+  --sidebar-accent: oklch(0.94 0.025 75);
+  --sidebar-accent-foreground: oklch(0.22 0.04 40);
+  --sidebar-border: oklch(0.88 0.02 70);
+  --sidebar-ring: oklch(0.55 0.16 35);
+
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --gradient-warm: linear-gradient(135deg, oklch(0.55 0.16 35) 0%, oklch(0.78 0.13 75) 100%);
+  --gradient-earth: linear-gradient(160deg, oklch(0.42 0.09 155) 0%, oklch(0.55 0.16 35) 100%);
+  --shadow-warm: 0 20px 50px -20px oklch(0.55 0.16 35 / 0.35);
+  --shadow-soft: 0 8px 24px -8px oklch(0.22 0.04 40 / 0.12);
 }
 
 .dark {
@@ -140,5 +151,13 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    font-family: var(--font-body);
+    font-feature-settings: "ss01", "cv11";
+  }
+
+  h1, h2, h3, h4, .font-display {
+    font-family: var(--font-display);
+    font-optical-sizing: auto;
+    letter-spacing: -0.02em;
   }
 }

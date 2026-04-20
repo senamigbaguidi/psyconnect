@@ -1,0 +1,46 @@
+{
+  "brand": "PsyConnect",
+  "tagline": "Tó dopo, dotunọ dopo, to ayiha towe kọ̀n.",
+  "nav": { "home": "Wèhú", "about": "Mí gbọn", "login": "Biọ", "signup": "Wlàn yinkọ", "dashboard": "Azọ́nxọ́", "logout": "Tọ́n" },
+  "home": {
+    "heroTitle": "Dọ̀ ohó. Yí tó. Họ̀n agbasa.",
+    "heroSub": "PsyConnect nọ kọ̀n mẹ he tin to alọgọ ayiha tọn biọ́ bo dotunọ he ko mọ́ pọ̀n lẹ́ to Aflika Whèyihọ́n.",
+    "ctaPatient": "N'biọ́ alọgọ", "ctaExpert": "Yẹ́n yin azọ́nwatọ́",
+    "f1Title": "IA he yiwanna",
+    "f1Desc": "PsyBot nọ kọ̀n hẹ we to whepoponu, to Flansegbe, Glẹnsigbe, Fɔngbe kavi Gungbe mẹ.",
+    "f2Title": "Dotunọ he ko mọ́ pọ̀n",
+    "f2Desc": "Dotunọ dopodopo wẹ azọ́nwa mí lẹ́ nọ pọ̀n céɖécéɖé.",
+    "f3Title": "Adọkun po yinkọ ma yin didoai",
+    "f3Desc": "Hiẹ sọgan kúdo yinkọ towe to dotunọ lẹ́ nukọn. Nudọnamẹ towe lẹ tin to whlàmẹ."
+  },
+  "auth": {
+    "loginTitle": "Vivọnu lẹkọ", "loginSub": "Mí ni zọ̀n aliho towe.",
+    "signupTitle": "Wá biọ́ PsyConnect mẹ",
+    "email": "Email", "password": "Whlàwhlà-hogbe", "phone": "Alokan",
+    "firstName": "Yinkọ tintan", "lastName": "Whẹ́nu yinkọ",
+    "anonymous": "Ma do yinkọ na dotunọ lẹ blo",
+    "signIn": "Biọ", "signUp": "Bló yinkọ ṣie",
+    "asPatient": "Gbẹtọ", "asExpert": "Dotunọ",
+    "haveAccount": "Hiẹ ko tindo yinkọ ya?", "noAccount": "Hiẹ tindo yinkọ blo?",
+    "checkEmail": "Pọ̀n email towe bo zindonukọnnamẹ.",
+    "expertNote": "Tomẹnu mítọn lẹ́ wẹ na pọ̀n dossier towe."
+  },
+  "expert": {
+    "type": "Dotunọ wunmẹ", "psychiatre": "Psikiyatri", "psychologue": "Psikoloji", "coach": "Tukla-tọ́", "autre": "Devo",
+    "description": "Basi zẹ́ẹ́mẹ azọ́n towe", "cabinet": "Azọ́nxọ́ yinkọ (jɛ́ɛ)", "address": "Aigba-tẹnmẹ",
+    "diploma": "Wéma azọ́n tọn (PDF/Foto)", "applicationSent": "Dossier sẹ̀dó. Mí na yi we kàn.",
+    "pendingTitle": "Dossier to alíáxixo mẹ",
+    "pendingDesc": "Tomẹnu lẹ́ to dossier towe pọ̀n.",
+    "rejectedTitle": "È gbẹ́ dossier", "reason": "Whẹjijọ"
+  },
+  "admin": {
+    "title": "Dotunọ lẹ́ pọ̀npọ̀n", "pending": "To alíáxixo", "approved": "Yi gbè", "rejected": "Gbẹ́",
+    "viewDiploma": "Pọ̀n wéma", "approve": "Yi gbè", "reject": "Gbẹ́", "rejectReason": "Whẹjijọ"
+  },
+  "dashboard": {
+    "patientTitle": "Gbẹtọ xọ", "patientWelcome": "{{name}}, etẹwẹ jì we to egbé?",
+    "expertTitle": "Dotunọ xọ", "adminTitle": "Tomẹnu xọ",
+    "comingSoon": "Ja"
+  },
+  "common": { "loading": "Ja...", "error": "Nudọnamẹ jẹ", "submit": "Sẹ́dó", "cancel": "Gbẹ́", "language": "Ogbè" }
+}

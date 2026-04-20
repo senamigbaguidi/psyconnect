@@ -1,6 +1,14 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
-
+import { Suspense, lazy } from "react";
 import appCss from "../styles.css?url";
+import { AuthProvider } from "@/lib/auth-context";
+import { Toaster } from "@/components/ui/sonner";
+
+// Initialize i18n once on the client (lazy to avoid SSR window access)
+const I18nLoader = lazy(async () => {
+  await import("@/i18n");
+  return { default: () => null };
+});
 
 function NotFoundComponent() {
   return (
@@ -29,14 +37,12 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "PsyConnect — Soutien psychologique en Afrique de l'Ouest" },
+      { name: "description", content: "Plateforme d'aide psychologique : écoute IA bienveillante, experts validés (psychologues, psychiatres, coachs) et confidentialité." },
+      { property: "og:title", content: "PsyConnect — Parler. Être écouté. Guérir." },
+      { property: "og:description", content: "Une oreille, un expert, à portée de cœur." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
       {
@@ -65,5 +71,11 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
-  return <Outlet />;
+  return (
+    <AuthProvider>
+      <Suspense fallback={null}><I18nLoader /></Suspense>
+      <Outlet />
+      <Toaster richColors position="top-right" />
+    </AuthProvider>
+  );
 }
