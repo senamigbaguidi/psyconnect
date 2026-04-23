@@ -23,8 +23,14 @@ function DashboardRouter() {
   }
 
   if (roles.includes("admin")) return <AdminDashboard />;
-  if (roles.includes("expert")) return <ExpertDashboard name={profile?.first_name ?? ""} />;
+  if (roles.includes("expert")) return <ExpertRedirect />;
   return <PatientDashboard name={profile?.is_anonymous ? "" : (profile?.first_name ?? "")} userId={user.id} />;
+}
+
+function ExpertRedirect() {
+  const navigate = useNavigate();
+  useEffect(() => { navigate({ to: "/expert" }); }, [navigate]);
+  return <div className="flex min-h-screen items-center justify-center text-muted-foreground">Chargement...</div>;
 }
 
 function PatientDashboard({ name, userId }: { name: string; userId: string }) {
