@@ -5,6 +5,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Heart, Sparkles, BookOpen, Phone, Search, Newspaper } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/dashboard")({
@@ -93,5 +94,17 @@ function SoonCard({ icon, title, tone }: { icon: React.ReactNode; title: string;
       <p className="font-display text-lg font-semibold">{title}</p>
       <p className="mt-1 text-xs uppercase tracking-wider text-muted-foreground">Bientôt disponible</p>
     </Card>
+  );
+}
+
+function ActionCard({ icon, title, to }: { icon: React.ReactNode; title: string; to: "/experts" | "/feed" }) {
+  return (
+    <Link to={to} className="block">
+      <Card className="p-6 transition-all hover:-translate-y-1 hover:shadow-[var(--shadow-warm)]">
+        <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">{icon}</div>
+        <p className="font-display text-lg font-semibold">{title}</p>
+        <p className="mt-1 text-xs uppercase tracking-wider text-primary">Disponible</p>
+      </Card>
+    </Link>
   );
 }
