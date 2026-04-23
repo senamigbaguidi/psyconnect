@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Heart, Sparkles, BookOpen, Phone, Search, Newspaper } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
