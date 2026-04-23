@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as FeedRouteImport } from './routes/feed'
 import { Route as ExpertsRouteImport } from './routes/experts'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
@@ -24,6 +25,11 @@ const SignupRoute = SignupRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FeedRoute = FeedRouteImport.update({
+  id: '/feed',
+  path: '/feed',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExpertsRoute = ExpertsRouteImport.update({
@@ -51,6 +57,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/experts': typeof ExpertsRoute
+  '/feed': typeof FeedRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/admin/experts': typeof AdminExpertsRoute
@@ -59,6 +66,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/experts': typeof ExpertsRoute
+  '/feed': typeof FeedRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/admin/experts': typeof AdminExpertsRoute
@@ -68,6 +76,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/experts': typeof ExpertsRoute
+  '/feed': typeof FeedRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/admin/experts': typeof AdminExpertsRoute
@@ -78,16 +87,25 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/experts'
+    | '/feed'
     | '/login'
     | '/signup'
     | '/admin/experts'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/experts' | '/login' | '/signup' | '/admin/experts'
+  to:
+    | '/'
+    | '/dashboard'
+    | '/experts'
+    | '/feed'
+    | '/login'
+    | '/signup'
+    | '/admin/experts'
   id:
     | '__root__'
     | '/'
     | '/dashboard'
     | '/experts'
+    | '/feed'
     | '/login'
     | '/signup'
     | '/admin/experts'
@@ -97,6 +115,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
   ExpertsRoute: typeof ExpertsRoute
+  FeedRoute: typeof FeedRoute
   LoginRoute: typeof LoginRoute
   SignupRoute: typeof SignupRoute
   AdminExpertsRoute: typeof AdminExpertsRoute
@@ -116,6 +135,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/feed': {
+      id: '/feed'
+      path: '/feed'
+      fullPath: '/feed'
+      preLoaderRoute: typeof FeedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/experts': {
@@ -153,6 +179,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
   ExpertsRoute: ExpertsRoute,
+  FeedRoute: FeedRoute,
   LoginRoute: LoginRoute,
   SignupRoute: SignupRoute,
   AdminExpertsRoute: AdminExpertsRoute,
