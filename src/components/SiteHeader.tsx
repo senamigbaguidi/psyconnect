@@ -16,6 +16,7 @@ export function SiteHeader() {
         <nav className="flex items-center gap-1 sm:gap-2">
           {user ? (
             <>
+              <Button variant="ghost" size="sm" onClick={() => navigate({ to: "/chat" })}>PsyBot</Button>
               <Button variant="ghost" size="sm" onClick={() => navigate({ to: "/feed" })}>Fil</Button>
               <Button variant="ghost" size="sm" onClick={() => navigate({ to: "/experts" })}>Experts</Button>
               <Button variant="ghost" size="sm" onClick={() => navigate({ to: "/dashboard" })}>Tableau de bord</Button>

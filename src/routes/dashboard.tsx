@@ -67,9 +67,9 @@ function PatientDashboard({ name, userId }: { name: string; userId: string }) {
         )}
 
         <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          <ActionCard icon={<Sparkles />} title="Parler à PsyBot" to="/chat" />
           <ActionCard icon={<Search />} title="Trouver un expert" to="/experts" />
           <ActionCard icon={<Newspaper />} title="Fil de publications" to="/feed" />
-          <SoonCard icon={<Sparkles />} title="PsyBot" />
           <SoonCard icon={<BookOpen />} title="Journal" />
           <SoonCard icon={<Heart />} title="Exercices" />
           <SoonCard icon={<Phone />} title="SOS" tone="destructive" />
@@ -96,7 +96,7 @@ function SoonCard({ icon, title, tone }: { icon: React.ReactNode; title: string;
   );
 }
 
-function ActionCard({ icon, title, to }: { icon: React.ReactNode; title: string; to: "/experts" | "/feed" }) {
+function ActionCard({ icon, title, to }: { icon: React.ReactNode; title: string; to: "/experts" | "/feed" | "/chat" }) {
   return (
     <Link to={to} className="block">
       <Card className="p-6 transition-all hover:-translate-y-1 hover:shadow-[var(--shadow-warm)]">
