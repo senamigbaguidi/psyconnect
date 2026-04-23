@@ -11,6 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as FeedRouteImport } from './routes/feed'
+import { Route as ExpertsRouteImport } from './routes/experts'
+import { Route as ExpertRouteImport } from './routes/expert'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminExpertsRouteImport } from './routes/admin.experts'
@@ -23,6 +26,21 @@ const SignupRoute = SignupRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FeedRoute = FeedRouteImport.update({
+  id: '/feed',
+  path: '/feed',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExpertsRoute = ExpertsRouteImport.update({
+  id: '/experts',
+  path: '/experts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExpertRoute = ExpertRouteImport.update({
+  id: '/expert',
+  path: '/expert',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -44,6 +62,9 @@ const AdminExpertsRoute = AdminExpertsRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
+  '/expert': typeof ExpertRoute
+  '/experts': typeof ExpertsRoute
+  '/feed': typeof FeedRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/admin/experts': typeof AdminExpertsRoute
@@ -51,6 +72,9 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
+  '/expert': typeof ExpertRoute
+  '/experts': typeof ExpertsRoute
+  '/feed': typeof FeedRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/admin/experts': typeof AdminExpertsRoute
@@ -59,21 +83,52 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
+  '/expert': typeof ExpertRoute
+  '/experts': typeof ExpertsRoute
+  '/feed': typeof FeedRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/admin/experts': typeof AdminExpertsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/login' | '/signup' | '/admin/experts'
+  fullPaths:
+    | '/'
+    | '/dashboard'
+    | '/expert'
+    | '/experts'
+    | '/feed'
+    | '/login'
+    | '/signup'
+    | '/admin/experts'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/login' | '/signup' | '/admin/experts'
-  id: '__root__' | '/' | '/dashboard' | '/login' | '/signup' | '/admin/experts'
+  to:
+    | '/'
+    | '/dashboard'
+    | '/expert'
+    | '/experts'
+    | '/feed'
+    | '/login'
+    | '/signup'
+    | '/admin/experts'
+  id:
+    | '__root__'
+    | '/'
+    | '/dashboard'
+    | '/expert'
+    | '/experts'
+    | '/feed'
+    | '/login'
+    | '/signup'
+    | '/admin/experts'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
+  ExpertRoute: typeof ExpertRoute
+  ExpertsRoute: typeof ExpertsRoute
+  FeedRoute: typeof FeedRoute
   LoginRoute: typeof LoginRoute
   SignupRoute: typeof SignupRoute
   AdminExpertsRoute: typeof AdminExpertsRoute
@@ -93,6 +148,27 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/feed': {
+      id: '/feed'
+      path: '/feed'
+      fullPath: '/feed'
+      preLoaderRoute: typeof FeedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/experts': {
+      id: '/experts'
+      path: '/experts'
+      fullPath: '/experts'
+      preLoaderRoute: typeof ExpertsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/expert': {
+      id: '/expert'
+      path: '/expert'
+      fullPath: '/expert'
+      preLoaderRoute: typeof ExpertRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -122,6 +198,9 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
+  ExpertRoute: ExpertRoute,
+  ExpertsRoute: ExpertsRoute,
+  FeedRoute: FeedRoute,
   LoginRoute: LoginRoute,
   SignupRoute: SignupRoute,
   AdminExpertsRoute: AdminExpertsRoute,

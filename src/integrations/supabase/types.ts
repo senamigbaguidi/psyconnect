@@ -62,6 +62,93 @@ export type Database = {
         }
         Relationships: []
       }
+      expert_profiles: {
+        Row: {
+          address: string
+          avatar_url: string | null
+          cabinet_name: string | null
+          consultation_price: number | null
+          created_at: string
+          description: string
+          display_name: string
+          expert_type: Database["public"]["Enums"]["expert_type"]
+          id: string
+          languages: string[]
+          subscription_expires_at: string | null
+          subscription_tier: Database["public"]["Enums"]["subscription_tier"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address: string
+          avatar_url?: string | null
+          cabinet_name?: string | null
+          consultation_price?: number | null
+          created_at?: string
+          description: string
+          display_name: string
+          expert_type: Database["public"]["Enums"]["expert_type"]
+          id?: string
+          languages?: string[]
+          subscription_expires_at?: string | null
+          subscription_tier?: Database["public"]["Enums"]["subscription_tier"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address?: string
+          avatar_url?: string | null
+          cabinet_name?: string | null
+          consultation_price?: number | null
+          created_at?: string
+          description?: string
+          display_name?: string
+          expert_type?: Database["public"]["Enums"]["expert_type"]
+          id?: string
+          languages?: string[]
+          subscription_expires_at?: string | null
+          subscription_tier?: Database["public"]["Enums"]["subscription_tier"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      posts: {
+        Row: {
+          author_id: string
+          content: string
+          cover_image_url: string | null
+          created_at: string
+          excerpt: string | null
+          id: string
+          published: boolean
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_id: string
+          content: string
+          cover_image_url?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          published?: boolean
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string
+          content?: string
+          cover_image_url?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          published?: boolean
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -124,6 +211,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      has_active_subscription: { Args: { _user_id: string }; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -136,6 +224,7 @@ export type Database = {
       app_role: "patient" | "expert" | "admin"
       expert_status: "pending" | "approved" | "rejected"
       expert_type: "psychiatre" | "psychologue" | "coach" | "autre"
+      subscription_tier: "none" | "standard" | "premium"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -266,6 +355,7 @@ export const Constants = {
       app_role: ["patient", "expert", "admin"],
       expert_status: ["pending", "approved", "rejected"],
       expert_type: ["psychiatre", "psychologue", "coach", "autre"],
+      subscription_tier: ["none", "standard", "premium"],
     },
   },
 } as const

@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Card } from "@/components/ui/card";
-import { Heart, Sparkles, BookOpen, Phone } from "lucide-react";
+import { Heart, Sparkles, BookOpen, Phone, Search, Newspaper } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/dashboard")({
@@ -23,8 +24,14 @@ function DashboardRouter() {
   }
 
   if (roles.includes("admin")) return <AdminDashboard />;
-  if (roles.includes("expert")) return <ExpertDashboard name={profile?.first_name ?? ""} />;
+  if (roles.includes("expert")) return <ExpertRedirect />;
   return <PatientDashboard name={profile?.is_anonymous ? "" : (profile?.first_name ?? "")} userId={user.id} />;
+}
+
+function ExpertRedirect() {
+  const navigate = useNavigate();
+  useEffect(() => { navigate({ to: "/expert" }); }, [navigate]);
+  return <div className="flex min-h-screen items-center justify-center text-muted-foreground">Chargement...</div>;
 }
 
 function PatientDashboard({ name, userId }: { name: string; userId: string }) {
@@ -60,24 +67,13 @@ function PatientDashboard({ name, userId }: { name: string; userId: string }) {
         )}
 
         <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          <ActionCard icon={<Search />} title="Trouver un expert" to="/experts" />
+          <ActionCard icon={<Newspaper />} title="Fil de publications" to="/feed" />
           <SoonCard icon={<Sparkles />} title="PsyBot" />
           <SoonCard icon={<BookOpen />} title="Journal" />
           <SoonCard icon={<Heart />} title="Exercices" />
           <SoonCard icon={<Phone />} title="SOS" tone="destructive" />
         </div>
-      </main>
-    </div>
-  );
-}
-
-function ExpertDashboard({ name }: { name: string }) {
-  return (
-    <div className="min-h-screen bg-background">
-      <SiteHeader />
-      <main className="container mx-auto px-4 py-12">
-        <h1 className="font-display text-4xl font-semibold">Espace expert</h1>
-        <p className="mt-2 text-muted-foreground">Bonjour {name}.</p>
-        <Card className="mt-8 p-8 text-center text-muted-foreground">Bientôt disponible</Card>
       </main>
     </div>
   );
@@ -97,5 +93,17 @@ function SoonCard({ icon, title, tone }: { icon: React.ReactNode; title: string;
       <p className="font-display text-lg font-semibold">{title}</p>
       <p className="mt-1 text-xs uppercase tracking-wider text-muted-foreground">Bientôt disponible</p>
     </Card>
+  );
+}
+
+function ActionCard({ icon, title, to }: { icon: React.ReactNode; title: string; to: "/experts" | "/feed" }) {
+  return (
+    <Link to={to} className="block">
+      <Card className="p-6 transition-all hover:-translate-y-1 hover:shadow-[var(--shadow-warm)]">
+        <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">{icon}</div>
+        <p className="font-display text-lg font-semibold">{title}</p>
+        <p className="mt-1 text-xs uppercase tracking-wider text-primary">Disponible</p>
+      </Card>
+    </Link>
   );
 }

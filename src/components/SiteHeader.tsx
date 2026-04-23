@@ -13,13 +13,13 @@ export function SiteHeader() {
           <div className="h-8 w-8 rounded-full" style={{ background: "var(--gradient-warm)" }} />
           <span className="font-display text-xl font-semibold tracking-tight">PsyConnect</span>
         </Link>
-        <nav className="flex items-center gap-2">
+        <nav className="flex items-center gap-1 sm:gap-2">
           {user ? (
             <>
-              <Button variant="ghost" onClick={() => navigate({ to: "/dashboard" })}>
-                Tableau de bord
-              </Button>
-              <Button variant="outline" onClick={async () => { await signOut(); navigate({ to: "/" }); }}>
+              <Button variant="ghost" size="sm" onClick={() => navigate({ to: "/feed" })}>Fil</Button>
+              <Button variant="ghost" size="sm" onClick={() => navigate({ to: "/experts" })}>Experts</Button>
+              <Button variant="ghost" size="sm" onClick={() => navigate({ to: "/dashboard" })}>Tableau de bord</Button>
+              <Button variant="outline" size="sm" onClick={async () => { await signOut(); navigate({ to: "/" }); }}>
                 Déconnexion
               </Button>
             </>
