@@ -122,9 +122,25 @@ function AppCard({ app, onChange, readonly }: { app: Application; onChange: () =
     }).eq("id", app.id);
     if (e1) { setBusy(false); toast.error(e1.message); return; }
     const { error: e2 } = await supabase.from("user_roles").insert({ user_id: app.user_id, role: "expert" });
-    setBusy(false);
     if (e2 && !e2.message.includes("duplicate")) { toast.error(e2.message); return; }
-    toast.success("Expert approuvé");
+
+    // Create expert profile + activate a 30-day standard trial (paiements arrivent en Phase 3)
+    const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+    const fullName = [app.profiles?.first_name, app.profiles?.last_name].filter(Boolean).join(" ").trim() || "Professionnel";
+    const { error: e3 } = await supabase.from("expert_profiles").upsert({
+      user_id: app.user_id,
+      expert_type: app.expert_type as "psychiatre" | "psychologue" | "coach" | "autre",
+      display_name: fullName,
+      description: app.description,
+      cabinet_name: app.cabinet_name,
+      address: app.address,
+      languages: ["fr"],
+      subscription_tier: "standard",
+      subscription_expires_at: expiresAt,
+    }, { onConflict: "user_id" });
+    setBusy(false);
+    if (e3) { toast.error(e3.message); return; }
+    toast.success("Expert approuvé (essai standard 30 jours activé)");
     onChange();
   };
 
