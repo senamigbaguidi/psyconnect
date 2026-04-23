@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Card } from "@/components/ui/card";
-import { Heart, Sparkles, BookOpen, Phone } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Heart, Sparkles, BookOpen, Phone, Search, Newspaper } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/dashboard")({
@@ -66,24 +67,13 @@ function PatientDashboard({ name, userId }: { name: string; userId: string }) {
         )}
 
         <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          <ActionCard icon={<Search />} title="Trouver un expert" to="/experts" />
+          <ActionCard icon={<Newspaper />} title="Fil de publications" to="/feed" />
           <SoonCard icon={<Sparkles />} title="PsyBot" />
           <SoonCard icon={<BookOpen />} title="Journal" />
           <SoonCard icon={<Heart />} title="Exercices" />
           <SoonCard icon={<Phone />} title="SOS" tone="destructive" />
         </div>
-      </main>
-    </div>
-  );
-}
-
-function ExpertDashboard({ name }: { name: string }) {
-  return (
-    <div className="min-h-screen bg-background">
-      <SiteHeader />
-      <main className="container mx-auto px-4 py-12">
-        <h1 className="font-display text-4xl font-semibold">Espace expert</h1>
-        <p className="mt-2 text-muted-foreground">Bonjour {name}.</p>
-        <Card className="mt-8 p-8 text-center text-muted-foreground">Bientôt disponible</Card>
       </main>
     </div>
   );
