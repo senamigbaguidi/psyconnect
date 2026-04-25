@@ -294,7 +294,7 @@ function ChatPage() {
                 <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setSidebarOpen(true)}>
                   <Menu className="h-5 w-5" />
                 </Button>
-                <div className="flex h-10 w-10 items-center justify-center rounded-full" style={{ background: "var(--gradient-warm)" }}>
+                <div className="flex h-10 w-10 items-center justify-center rounded-full" style={{ background: "var(--gradient-calm)" }}>
                   <Sparkles className="h-5 w-5 text-primary-foreground" />
                 </div>
                 <div>

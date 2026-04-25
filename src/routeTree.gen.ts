@@ -17,6 +17,8 @@ import { Route as ExpertRouteImport } from './routes/expert'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ChatRouteImport } from './routes/chat'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SignupPatientRouteImport } from './routes/signup.patient'
+import { Route as SignupExpertRouteImport } from './routes/signup.expert'
 import { Route as ApiReferralsRouteImport } from './routes/api/referrals'
 import { Route as ApiConversationsRouteImport } from './routes/api/conversations'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
@@ -63,6 +65,16 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SignupPatientRoute = SignupPatientRouteImport.update({
+  id: '/patient',
+  path: '/patient',
+  getParentRoute: () => SignupRoute,
+} as any)
+const SignupExpertRoute = SignupExpertRouteImport.update({
+  id: '/expert',
+  path: '/expert',
+  getParentRoute: () => SignupRoute,
+} as any)
 const ApiReferralsRoute = ApiReferralsRouteImport.update({
   id: '/api/referrals',
   path: '/api/referrals',
@@ -98,11 +110,13 @@ export interface FileRoutesByFullPath {
   '/experts': typeof ExpertsRoute
   '/feed': typeof FeedRoute
   '/login': typeof LoginRoute
-  '/signup': typeof SignupRoute
+  '/signup': typeof SignupRouteWithChildren
   '/admin/experts': typeof AdminExpertsRoute
   '/api/chat': typeof ApiChatRoute
   '/api/conversations': typeof ApiConversationsRouteWithChildren
   '/api/referrals': typeof ApiReferralsRoute
+  '/signup/expert': typeof SignupExpertRoute
+  '/signup/patient': typeof SignupPatientRoute
   '/api/conversations/$id/messages': typeof ApiConversationsIdMessagesRoute
 }
 export interface FileRoutesByTo {
@@ -113,11 +127,13 @@ export interface FileRoutesByTo {
   '/experts': typeof ExpertsRoute
   '/feed': typeof FeedRoute
   '/login': typeof LoginRoute
-  '/signup': typeof SignupRoute
+  '/signup': typeof SignupRouteWithChildren
   '/admin/experts': typeof AdminExpertsRoute
   '/api/chat': typeof ApiChatRoute
   '/api/conversations': typeof ApiConversationsRouteWithChildren
   '/api/referrals': typeof ApiReferralsRoute
+  '/signup/expert': typeof SignupExpertRoute
+  '/signup/patient': typeof SignupPatientRoute
   '/api/conversations/$id/messages': typeof ApiConversationsIdMessagesRoute
 }
 export interface FileRoutesById {
@@ -129,11 +145,13 @@ export interface FileRoutesById {
   '/experts': typeof ExpertsRoute
   '/feed': typeof FeedRoute
   '/login': typeof LoginRoute
-  '/signup': typeof SignupRoute
+  '/signup': typeof SignupRouteWithChildren
   '/admin/experts': typeof AdminExpertsRoute
   '/api/chat': typeof ApiChatRoute
   '/api/conversations': typeof ApiConversationsRouteWithChildren
   '/api/referrals': typeof ApiReferralsRoute
+  '/signup/expert': typeof SignupExpertRoute
+  '/signup/patient': typeof SignupPatientRoute
   '/api/conversations/$id/messages': typeof ApiConversationsIdMessagesRoute
 }
 export interface FileRouteTypes {
@@ -151,6 +169,8 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/api/conversations'
     | '/api/referrals'
+    | '/signup/expert'
+    | '/signup/patient'
     | '/api/conversations/$id/messages'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -166,6 +186,8 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/api/conversations'
     | '/api/referrals'
+    | '/signup/expert'
+    | '/signup/patient'
     | '/api/conversations/$id/messages'
   id:
     | '__root__'
@@ -181,6 +203,8 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/api/conversations'
     | '/api/referrals'
+    | '/signup/expert'
+    | '/signup/patient'
     | '/api/conversations/$id/messages'
   fileRoutesById: FileRoutesById
 }
@@ -192,7 +216,7 @@ export interface RootRouteChildren {
   ExpertsRoute: typeof ExpertsRoute
   FeedRoute: typeof FeedRoute
   LoginRoute: typeof LoginRoute
-  SignupRoute: typeof SignupRoute
+  SignupRoute: typeof SignupRouteWithChildren
   AdminExpertsRoute: typeof AdminExpertsRoute
   ApiChatRoute: typeof ApiChatRoute
   ApiConversationsRoute: typeof ApiConversationsRouteWithChildren
@@ -257,6 +281,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/signup/patient': {
+      id: '/signup/patient'
+      path: '/patient'
+      fullPath: '/signup/patient'
+      preLoaderRoute: typeof SignupPatientRouteImport
+      parentRoute: typeof SignupRoute
+    }
+    '/signup/expert': {
+      id: '/signup/expert'
+      path: '/expert'
+      fullPath: '/signup/expert'
+      preLoaderRoute: typeof SignupExpertRouteImport
+      parentRoute: typeof SignupRoute
+    }
     '/api/referrals': {
       id: '/api/referrals'
       path: '/api/referrals'
@@ -295,6 +333,19 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface SignupRouteChildren {
+  SignupExpertRoute: typeof SignupExpertRoute
+  SignupPatientRoute: typeof SignupPatientRoute
+}
+
+const SignupRouteChildren: SignupRouteChildren = {
+  SignupExpertRoute: SignupExpertRoute,
+  SignupPatientRoute: SignupPatientRoute,
+}
+
+const SignupRouteWithChildren =
+  SignupRoute._addFileChildren(SignupRouteChildren)
+
 interface ApiConversationsRouteChildren {
   ApiConversationsIdMessagesRoute: typeof ApiConversationsIdMessagesRoute
 }
@@ -314,7 +365,7 @@ const rootRouteChildren: RootRouteChildren = {
   ExpertsRoute: ExpertsRoute,
   FeedRoute: FeedRoute,
   LoginRoute: LoginRoute,
-  SignupRoute: SignupRoute,
+  SignupRoute: SignupRouteWithChildren,
   AdminExpertsRoute: AdminExpertsRoute,
   ApiChatRoute: ApiChatRoute,
   ApiConversationsRoute: ApiConversationsRouteWithChildren,
