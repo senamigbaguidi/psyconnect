@@ -17,8 +17,11 @@ import { Route as ExpertRouteImport } from './routes/expert'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ChatRouteImport } from './routes/chat'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiReferralsRouteImport } from './routes/api/referrals'
+import { Route as ApiConversationsRouteImport } from './routes/api/conversations'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AdminExpertsRouteImport } from './routes/admin.experts'
+import { Route as ApiConversationsIdMessagesRouteImport } from './routes/api/conversations.$id.messages'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -60,6 +63,16 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiReferralsRoute = ApiReferralsRouteImport.update({
+  id: '/api/referrals',
+  path: '/api/referrals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiConversationsRoute = ApiConversationsRouteImport.update({
+  id: '/api/conversations',
+  path: '/api/conversations',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiChatRoute = ApiChatRouteImport.update({
   id: '/api/chat',
   path: '/api/chat',
@@ -70,6 +83,12 @@ const AdminExpertsRoute = AdminExpertsRouteImport.update({
   path: '/admin/experts',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiConversationsIdMessagesRoute =
+  ApiConversationsIdMessagesRouteImport.update({
+    id: '/$id/messages',
+    path: '/$id/messages',
+    getParentRoute: () => ApiConversationsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -82,6 +101,9 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/admin/experts': typeof AdminExpertsRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/conversations': typeof ApiConversationsRouteWithChildren
+  '/api/referrals': typeof ApiReferralsRoute
+  '/api/conversations/$id/messages': typeof ApiConversationsIdMessagesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -94,6 +116,9 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/admin/experts': typeof AdminExpertsRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/conversations': typeof ApiConversationsRouteWithChildren
+  '/api/referrals': typeof ApiReferralsRoute
+  '/api/conversations/$id/messages': typeof ApiConversationsIdMessagesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -107,6 +132,9 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/admin/experts': typeof AdminExpertsRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/conversations': typeof ApiConversationsRouteWithChildren
+  '/api/referrals': typeof ApiReferralsRoute
+  '/api/conversations/$id/messages': typeof ApiConversationsIdMessagesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -121,6 +149,9 @@ export interface FileRouteTypes {
     | '/signup'
     | '/admin/experts'
     | '/api/chat'
+    | '/api/conversations'
+    | '/api/referrals'
+    | '/api/conversations/$id/messages'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -133,6 +164,9 @@ export interface FileRouteTypes {
     | '/signup'
     | '/admin/experts'
     | '/api/chat'
+    | '/api/conversations'
+    | '/api/referrals'
+    | '/api/conversations/$id/messages'
   id:
     | '__root__'
     | '/'
@@ -145,6 +179,9 @@ export interface FileRouteTypes {
     | '/signup'
     | '/admin/experts'
     | '/api/chat'
+    | '/api/conversations'
+    | '/api/referrals'
+    | '/api/conversations/$id/messages'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -158,6 +195,8 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   AdminExpertsRoute: typeof AdminExpertsRoute
   ApiChatRoute: typeof ApiChatRoute
+  ApiConversationsRoute: typeof ApiConversationsRouteWithChildren
+  ApiReferralsRoute: typeof ApiReferralsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -218,6 +257,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/referrals': {
+      id: '/api/referrals'
+      path: '/api/referrals'
+      fullPath: '/api/referrals'
+      preLoaderRoute: typeof ApiReferralsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/conversations': {
+      id: '/api/conversations'
+      path: '/api/conversations'
+      fullPath: '/api/conversations'
+      preLoaderRoute: typeof ApiConversationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/chat': {
       id: '/api/chat'
       path: '/api/chat'
@@ -232,8 +285,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminExpertsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/conversations/$id/messages': {
+      id: '/api/conversations/$id/messages'
+      path: '/$id/messages'
+      fullPath: '/api/conversations/$id/messages'
+      preLoaderRoute: typeof ApiConversationsIdMessagesRouteImport
+      parentRoute: typeof ApiConversationsRoute
+    }
   }
 }
+
+interface ApiConversationsRouteChildren {
+  ApiConversationsIdMessagesRoute: typeof ApiConversationsIdMessagesRoute
+}
+
+const ApiConversationsRouteChildren: ApiConversationsRouteChildren = {
+  ApiConversationsIdMessagesRoute: ApiConversationsIdMessagesRoute,
+}
+
+const ApiConversationsRouteWithChildren =
+  ApiConversationsRoute._addFileChildren(ApiConversationsRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -246,7 +317,18 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   AdminExpertsRoute: AdminExpertsRoute,
   ApiChatRoute: ApiChatRoute,
+  ApiConversationsRoute: ApiConversationsRouteWithChildren,
+  ApiReferralsRoute: ApiReferralsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}

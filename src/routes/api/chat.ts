@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
+import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { analyzeCrisis } from "@/lib/server/crisis-detection";
 
 const SYSTEM_PROMPT = `Tu es **PsyBot**, l'assistant d'écoute de la plateforme **PsyConnect**.
 
@@ -81,6 +83,9 @@ export const Route = createFileRoute("/api/chat")({
             });
           }
 
+          // Analyse pré-IA du message utilisateur (mots-clés).
+          const userSignal = analyzeCrisis(body.message, false);
+
           // Get or create conversation
           let conversationId = body.conversationId;
           if (!conversationId) {
@@ -106,9 +111,32 @@ export const Route = createFileRoute("/api/chat")({
             .limit(40);
 
           // Save user message
-          await supabase.from("chat_messages").insert({
-            conversation_id: conversationId, user_id: userId, role: "user", content: body.message,
-          });
+          const { data: savedUserMsg } = await supabase
+            .from("chat_messages")
+            .insert({
+              conversation_id: conversationId, user_id: userId, role: "user", content: body.message,
+              metadata: userSignal.detected
+                ? { crisis_signal: { score: userSignal.score, severity: userSignal.severity, keywords: userSignal.keywords } }
+                : {},
+            })
+            .select("id").single();
+
+          // Si déjà détecté côté utilisateur, journalise immédiatement (audit admin).
+          if (userSignal.detected) {
+            await supabaseAdmin.from("crisis_events").insert({
+              user_id: userId,
+              conversation_id: conversationId!,
+              message_id: savedUserMsg?.id,
+              severity: userSignal.severity,
+              intensity_score: userSignal.score,
+              matched_keywords: userSignal.keywords,
+              ai_flagged: false,
+              excerpt: body.message.slice(0, 280),
+            });
+            await supabaseAdmin.from("chat_conversations")
+              .update({ crisis_detected: true })
+              .eq("id", conversationId!);
+          }
 
           const messages = [
             { role: "system", content: SYSTEM_PROMPT },
@@ -182,28 +210,52 @@ export const Route = createFileRoute("/api/chat")({
                 console.error("stream error", e);
               } finally {
                 // Parse markers
-                const crisis = fullText.includes("[[CRISIS_DETECTED]]");
+                const aiCrisis = fullText.includes("[[CRISIS_DETECTED]]");
                 const recMatch = fullText.match(/\[\[RECOMMEND_EXPERT:(psychologue|psychiatre|coach|autre)\]\]/);
                 const cleanContent = fullText
                   .replace(/\[\[CRISIS_DETECTED\]\]/g, "")
                   .replace(/\[\[RECOMMEND_EXPERT:[^\]]+\]\]/g, "")
                   .trim();
 
-                await supabase.from("chat_messages").insert({
+                // Analyse multi-signaux combinée (mots-clés sur réponse IA + flag IA + signal utilisateur).
+                const aiSignal = analyzeCrisis(cleanContent, aiCrisis);
+                const finalCrisis = aiSignal.detected || userSignal.detected;
+                const finalSeverity = userSignal.score >= aiSignal.score ? userSignal.severity : aiSignal.severity;
+                const combinedScore = userSignal.score + aiSignal.score;
+                const combinedKeywords = Array.from(new Set([...userSignal.keywords, ...aiSignal.keywords]));
+
+                const { data: savedAiMsg } = await supabase.from("chat_messages").insert({
                   conversation_id: conversationId!,
                   user_id: userId,
                   role: "assistant",
                   content: cleanContent,
                   metadata: {
-                    crisis_detected: crisis,
+                    crisis_detected: finalCrisis,
+                    crisis_severity: finalCrisis ? finalSeverity : null,
+                    crisis_score: combinedScore,
                     recommend_expert: recMatch ? recMatch[1] : null,
                   },
-                });
+                }).select("id").single();
+
+                // Audit serveur si crise détectée par l'IA (et pas déjà journalisée côté utilisateur,
+                // ou pour enrichir l'événement avec les signaux IA).
+                if (aiCrisis || (aiSignal.detected && !userSignal.detected)) {
+                  await supabaseAdmin.from("crisis_events").insert({
+                    user_id: userId,
+                    conversation_id: conversationId!,
+                    message_id: savedAiMsg?.id,
+                    severity: aiSignal.severity,
+                    intensity_score: aiSignal.score,
+                    matched_keywords: aiSignal.keywords,
+                    ai_flagged: aiCrisis,
+                    excerpt: cleanContent.slice(0, 280),
+                  });
+                }
 
                 await supabase.from("chat_conversations")
                   .update({
                     last_message_at: new Date().toISOString(),
-                    crisis_detected: crisis ? true : undefined,
+                    crisis_detected: finalCrisis ? true : undefined,
                   })
                   .eq("id", conversationId!);
 
