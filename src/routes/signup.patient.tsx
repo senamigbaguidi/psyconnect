@@ -54,8 +54,8 @@ function PatientSignup() {
       toast.error(error.message);
       return;
     }
-    toast.success("Vérifiez votre email pour confirmer votre inscription.");
-    navigate({ to: "/login" });
+    toast.success("Bienvenue ! Découvrons PsyConnect ensemble.");
+    navigate({ to: "/onboarding" });
   };
 
   return (

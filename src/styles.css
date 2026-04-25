@@ -164,4 +164,25 @@
     font-optical-sizing: auto;
     letter-spacing: -0.02em;
   }
+
+  /* Accessibility: visible focus ring for all keyboard users */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  /* Skip default focus on mouse but keep for keyboard */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  /* Reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
 }
