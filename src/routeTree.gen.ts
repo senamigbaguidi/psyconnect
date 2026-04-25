@@ -17,6 +17,7 @@ import { Route as ExpertRouteImport } from './routes/expert'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ChatRouteImport } from './routes/chat'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiConversationsRouteImport } from './routes/api/conversations'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AdminExpertsRouteImport } from './routes/admin.experts'
 
@@ -60,6 +61,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiConversationsRoute = ApiConversationsRouteImport.update({
+  id: '/api/conversations',
+  path: '/api/conversations',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiChatRoute = ApiChatRouteImport.update({
   id: '/api/chat',
   path: '/api/chat',
@@ -82,6 +88,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/admin/experts': typeof AdminExpertsRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/conversations': typeof ApiConversationsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -94,6 +101,7 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/admin/experts': typeof AdminExpertsRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/conversations': typeof ApiConversationsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -107,6 +115,7 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/admin/experts': typeof AdminExpertsRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/conversations': typeof ApiConversationsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -121,6 +130,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/admin/experts'
     | '/api/chat'
+    | '/api/conversations'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -133,6 +143,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/admin/experts'
     | '/api/chat'
+    | '/api/conversations'
   id:
     | '__root__'
     | '/'
@@ -145,6 +156,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/admin/experts'
     | '/api/chat'
+    | '/api/conversations'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -158,6 +170,7 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   AdminExpertsRoute: typeof AdminExpertsRoute
   ApiChatRoute: typeof ApiChatRoute
+  ApiConversationsRoute: typeof ApiConversationsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -218,6 +231,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/conversations': {
+      id: '/api/conversations'
+      path: '/api/conversations'
+      fullPath: '/api/conversations'
+      preLoaderRoute: typeof ApiConversationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/chat': {
       id: '/api/chat'
       path: '/api/chat'
@@ -246,6 +266,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   AdminExpertsRoute: AdminExpertsRoute,
   ApiChatRoute: ApiChatRoute,
+  ApiConversationsRoute: ApiConversationsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
