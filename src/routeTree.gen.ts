@@ -17,6 +17,7 @@ import { Route as ExpertRouteImport } from './routes/expert'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ChatRouteImport } from './routes/chat'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiReferralsRouteImport } from './routes/api/referrals'
 import { Route as ApiConversationsRouteImport } from './routes/api/conversations'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AdminExpertsRouteImport } from './routes/admin.experts'
@@ -62,6 +63,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiReferralsRoute = ApiReferralsRouteImport.update({
+  id: '/api/referrals',
+  path: '/api/referrals',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiConversationsRoute = ApiConversationsRouteImport.update({
   id: '/api/conversations',
   path: '/api/conversations',
@@ -96,6 +102,7 @@ export interface FileRoutesByFullPath {
   '/admin/experts': typeof AdminExpertsRoute
   '/api/chat': typeof ApiChatRoute
   '/api/conversations': typeof ApiConversationsRouteWithChildren
+  '/api/referrals': typeof ApiReferralsRoute
   '/api/conversations/$id/messages': typeof ApiConversationsIdMessagesRoute
 }
 export interface FileRoutesByTo {
@@ -110,6 +117,7 @@ export interface FileRoutesByTo {
   '/admin/experts': typeof AdminExpertsRoute
   '/api/chat': typeof ApiChatRoute
   '/api/conversations': typeof ApiConversationsRouteWithChildren
+  '/api/referrals': typeof ApiReferralsRoute
   '/api/conversations/$id/messages': typeof ApiConversationsIdMessagesRoute
 }
 export interface FileRoutesById {
@@ -125,6 +133,7 @@ export interface FileRoutesById {
   '/admin/experts': typeof AdminExpertsRoute
   '/api/chat': typeof ApiChatRoute
   '/api/conversations': typeof ApiConversationsRouteWithChildren
+  '/api/referrals': typeof ApiReferralsRoute
   '/api/conversations/$id/messages': typeof ApiConversationsIdMessagesRoute
 }
 export interface FileRouteTypes {
@@ -141,6 +150,7 @@ export interface FileRouteTypes {
     | '/admin/experts'
     | '/api/chat'
     | '/api/conversations'
+    | '/api/referrals'
     | '/api/conversations/$id/messages'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -155,6 +165,7 @@ export interface FileRouteTypes {
     | '/admin/experts'
     | '/api/chat'
     | '/api/conversations'
+    | '/api/referrals'
     | '/api/conversations/$id/messages'
   id:
     | '__root__'
@@ -169,6 +180,7 @@ export interface FileRouteTypes {
     | '/admin/experts'
     | '/api/chat'
     | '/api/conversations'
+    | '/api/referrals'
     | '/api/conversations/$id/messages'
   fileRoutesById: FileRoutesById
 }
@@ -184,6 +196,7 @@ export interface RootRouteChildren {
   AdminExpertsRoute: typeof AdminExpertsRoute
   ApiChatRoute: typeof ApiChatRoute
   ApiConversationsRoute: typeof ApiConversationsRouteWithChildren
+  ApiReferralsRoute: typeof ApiReferralsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -244,6 +257,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/referrals': {
+      id: '/api/referrals'
+      path: '/api/referrals'
+      fullPath: '/api/referrals'
+      preLoaderRoute: typeof ApiReferralsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/conversations': {
       id: '/api/conversations'
       path: '/api/conversations'
@@ -298,6 +318,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminExpertsRoute: AdminExpertsRoute,
   ApiChatRoute: ApiChatRoute,
   ApiConversationsRoute: ApiConversationsRouteWithChildren,
+  ApiReferralsRoute: ApiReferralsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
