@@ -59,6 +59,7 @@ function SignupChoice() {
             subtitle="Patient"
             desc="Parlez à PsyBot, trouvez un expert, prenez soin de votre bien-être mental."
             features={["PsyBot illimité", "Annuaire d'experts validés", "Anonymat possible"]}
+            ctaLabel="Créer un compte patient"
           />
           <ChoiceCard
             to="/signup/expert"
@@ -68,6 +69,7 @@ function SignupChoice() {
             subtitle="Expert"
             desc="Psychologue, psychiatre ou coach ? Rejoignez notre annuaire vérifié."
             features={["Profil pro vérifié", "Mises en relation", "Outils dédiés"]}
+            ctaLabel="Postuler comme expert"
           />
         </div>
 
