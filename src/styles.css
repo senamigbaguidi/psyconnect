@@ -4,8 +4,8 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Fonts: warm African-inspired editorial */
-@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap");
+/* Fonts: serene, mindful, mental health editorial */
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap");
 
 /*
  * Design system definition.
@@ -66,46 +66,50 @@
 
 :root {
   --radius: 0.625rem;
-  /* Warm African palette: terracotta, ocre, vert profond, crème */
-  --background: oklch(0.98 0.012 75);
-  --foreground: oklch(0.22 0.04 40);
-  --card: oklch(0.995 0.008 80);
-  --card-foreground: oklch(0.22 0.04 40);
-  --popover: oklch(0.995 0.008 80);
-  --popover-foreground: oklch(0.22 0.04 40);
-  --primary: oklch(0.55 0.16 35);          /* terracotta */
-  --primary-foreground: oklch(0.98 0.012 75);
-  --secondary: oklch(0.42 0.09 155);       /* vert profond */
-  --secondary-foreground: oklch(0.98 0.012 75);
-  --muted: oklch(0.94 0.018 75);
-  --muted-foreground: oklch(0.45 0.03 45);
-  --accent: oklch(0.78 0.13 75);           /* ocre */
-  --accent-foreground: oklch(0.22 0.04 40);
-  --destructive: oklch(0.55 0.22 25);
-  --destructive-foreground: oklch(0.98 0.012 75);
-  --border: oklch(0.88 0.02 70);
-  --input: oklch(0.88 0.02 70);
-  --ring: oklch(0.55 0.16 35);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.96 0.018 75);
-  --sidebar-foreground: oklch(0.22 0.04 40);
-  --sidebar-primary: oklch(0.55 0.16 35);
-  --sidebar-primary-foreground: oklch(0.98 0.012 75);
-  --sidebar-accent: oklch(0.94 0.025 75);
-  --sidebar-accent-foreground: oklch(0.22 0.04 40);
-  --sidebar-border: oklch(0.88 0.02 70);
-  --sidebar-ring: oklch(0.55 0.16 35);
+  /* Mindful palette: calming blue (trust) + sage green (growth) + lavender (care) */
+  --background: oklch(0.985 0.008 220);             /* almost-white blue mist */
+  --foreground: oklch(0.22 0.05 240);                /* deep ink blue */
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.22 0.05 240);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.22 0.05 240);
+  --primary: oklch(0.52 0.13 235);                   /* calming therapeutic blue */
+  --primary-foreground: oklch(0.99 0.005 220);
+  --secondary: oklch(0.62 0.08 155);                 /* sage green — growth, balance */
+  --secondary-foreground: oklch(0.99 0.005 220);
+  --muted: oklch(0.95 0.012 220);
+  --muted-foreground: oklch(0.48 0.03 235);
+  --accent: oklch(0.78 0.07 290);                    /* soft lavender — empathy, care */
+  --accent-foreground: oklch(0.25 0.06 290);
+  --destructive: oklch(0.58 0.20 25);
+  --destructive-foreground: oklch(0.99 0.005 220);
+  --border: oklch(0.91 0.012 220);
+  --input: oklch(0.93 0.012 220);
+  --ring: oklch(0.52 0.13 235);
+  --chart-1: oklch(0.52 0.13 235);
+  --chart-2: oklch(0.62 0.08 155);
+  --chart-3: oklch(0.78 0.07 290);
+  --chart-4: oklch(0.72 0.10 200);
+  --chart-5: oklch(0.65 0.12 175);
+  --sidebar: oklch(0.97 0.010 220);
+  --sidebar-foreground: oklch(0.22 0.05 240);
+  --sidebar-primary: oklch(0.52 0.13 235);
+  --sidebar-primary-foreground: oklch(0.99 0.005 220);
+  --sidebar-accent: oklch(0.94 0.018 220);
+  --sidebar-accent-foreground: oklch(0.22 0.05 240);
+  --sidebar-border: oklch(0.91 0.012 220);
+  --sidebar-ring: oklch(0.52 0.13 235);
 
   --font-display: "Fraunces", Georgia, serif;
   --font-body: "Inter", system-ui, sans-serif;
-  --gradient-warm: linear-gradient(135deg, oklch(0.55 0.16 35) 0%, oklch(0.78 0.13 75) 100%);
-  --gradient-earth: linear-gradient(160deg, oklch(0.42 0.09 155) 0%, oklch(0.55 0.16 35) 100%);
-  --shadow-warm: 0 20px 50px -20px oklch(0.55 0.16 35 / 0.35);
-  --shadow-soft: 0 8px 24px -8px oklch(0.22 0.04 40 / 0.12);
+  /* Mindful gradients — soft, healing, never aggressive */
+  --gradient-calm: linear-gradient(135deg, oklch(0.52 0.13 235) 0%, oklch(0.62 0.08 155) 100%);
+  --gradient-mist: linear-gradient(160deg, oklch(0.78 0.07 290) 0%, oklch(0.52 0.13 235) 100%);
+  --gradient-sage: linear-gradient(135deg, oklch(0.62 0.08 155) 0%, oklch(0.78 0.07 290) 100%);
+  --gradient-aurora: radial-gradient(ellipse at 20% 0%, oklch(0.78 0.07 290 / 0.4) 0%, transparent 50%), radial-gradient(ellipse at 80% 100%, oklch(0.62 0.08 155 / 0.35) 0%, transparent 50%), radial-gradient(ellipse at 50% 50%, oklch(0.52 0.13 235 / 0.25) 0%, transparent 60%);
+  --shadow-calm: 0 20px 50px -20px oklch(0.52 0.13 235 / 0.30);
+  --shadow-soft: 0 8px 24px -8px oklch(0.22 0.05 240 / 0.10);
+  --shadow-glow: 0 0 60px -15px oklch(0.52 0.13 235 / 0.45);
 }
 
 .dark {
