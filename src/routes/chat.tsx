@@ -1,13 +1,15 @@
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { SOSDialog } from "@/components/SOSDialog";
+import { ConversationsSidebar } from "@/components/chat/ConversationsSidebar";
+import { ExpertRecommendations } from "@/components/chat/ExpertRecommendations";
 import { supabase } from "@/integrations/supabase/client";
-import { Sparkles, Send, AlertCircle, ArrowRight, Loader2 } from "lucide-react";
+import { Sparkles, Send, AlertCircle, Loader2, Menu, X } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { toast } from "sonner";
 
@@ -16,10 +18,14 @@ export const Route = createFileRoute("/chat")({
 });
 
 type Msg = {
+  id?: string;
   role: "user" | "assistant";
   content: string;
   metadata?: { crisis_detected?: boolean; recommend_expert?: string | null };
 };
+
+const PAGE_SIZE = 20;
+type ExpertType = "psychologue" | "psychiatre" | "coach" | "autre";
 
 function ChatPage() {
   const { user, loading } = useAuth();
@@ -29,15 +35,121 @@ function ChatPage() {
   const [sending, setSending] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [sosOpen, setSosOpen] = useState(false);
+  const [hasMoreMessages, setHasMoreMessages] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [loadingConv, setLoadingConv] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarRefreshKey, setSidebarRefreshKey] = useState(0);
+  const [highlightId, setHighlightId] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const messageRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/login" });
   }, [loading, user, navigate]);
 
+  // Auto-scroll bas pendant le streaming.
+  const stickyBottom = useRef(true);
   useEffect(() => {
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
+    if (stickyBottom.current) {
+      scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
+    }
   }, [messages]);
+
+  const onScroll = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const distance = el.scrollHeight - el.scrollTop - el.clientHeight;
+    stickyBottom.current = distance < 80;
+  };
+
+  // Charger une conversation existante (page la plus récente).
+  const loadConversation = useCallback(async (convId: string, scrollToMessageId?: string) => {
+    setLoadingConv(true);
+    setMessages([]);
+    setConversationId(convId);
+    const { data: { session } } = await supabase.auth.getSession();
+    const resp = await fetch(`/api/conversations/${convId}/messages?limit=${PAGE_SIZE}`, {
+      headers: { Authorization: `Bearer ${session?.access_token ?? ""}` },
+    });
+    if (resp.ok) {
+      const json = await resp.json();
+      const items = (json.items ?? []) as Array<Msg & { id: string; created_at: string }>;
+      setMessages(items);
+      setHasMoreMessages(Boolean(json.hasMore));
+      // Si on cible un message en particulier, on charge plus jusqu'à le trouver (max 5 pages).
+      if (scrollToMessageId && !items.some((m) => m.id === scrollToMessageId)) {
+        let pages = 0;
+        let oldest = items[0]?.created_at;
+        let allItems = items;
+        while (pages < 5 && oldest && !allItems.some((m) => m.id === scrollToMessageId)) {
+          pages++;
+          const r2 = await fetch(`/api/conversations/${convId}/messages?limit=${PAGE_SIZE}&before=${encodeURIComponent(oldest)}`, {
+            headers: { Authorization: `Bearer ${session?.access_token ?? ""}` },
+          });
+          if (!r2.ok) break;
+          const j2 = await r2.json();
+          const more = (j2.items ?? []) as Array<Msg & { id: string; created_at: string }>;
+          if (more.length === 0) break;
+          allItems = [...more, ...allItems];
+          oldest = more[0]?.created_at;
+          setHasMoreMessages(Boolean(j2.hasMore));
+        }
+        setMessages(allItems);
+      }
+      setHighlightId(scrollToMessageId ?? null);
+    } else {
+      toast.error("Impossible de charger la conversation");
+    }
+    setLoadingConv(false);
+    setSidebarOpen(false);
+    stickyBottom.current = !scrollToMessageId;
+  }, []);
+
+  // Scroll vers le message ciblé après chargement.
+  useEffect(() => {
+    if (!highlightId) return;
+    const el = messageRefs.current.get(highlightId);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+      const t = setTimeout(() => setHighlightId(null), 2500);
+      return () => clearTimeout(t);
+    }
+  }, [highlightId, messages]);
+
+  const loadMoreMessages = async () => {
+    if (!conversationId || loadingMore || messages.length === 0) return;
+    setLoadingMore(true);
+    const oldest = (messages[0] as Msg & { created_at?: string }).created_at;
+    const { data: { session } } = await supabase.auth.getSession();
+    const params = new URLSearchParams({ limit: String(PAGE_SIZE) });
+    if (oldest) params.set("before", oldest);
+    const resp = await fetch(`/api/conversations/${conversationId}/messages?${params.toString()}`, {
+      headers: { Authorization: `Bearer ${session?.access_token ?? ""}` },
+    });
+    if (resp.ok) {
+      const json = await resp.json();
+      const items = (json.items ?? []) as Array<Msg & { created_at: string }>;
+      // Préserver la position de scroll après préfixage.
+      const el = scrollRef.current;
+      const prevHeight = el?.scrollHeight ?? 0;
+      setMessages((prev) => [...items, ...prev]);
+      setHasMoreMessages(Boolean(json.hasMore));
+      requestAnimationFrame(() => {
+        if (el) el.scrollTop = el.scrollHeight - prevHeight;
+      });
+      stickyBottom.current = false;
+    }
+    setLoadingMore(false);
+  };
+
+  const newConversation = () => {
+    setConversationId(null);
+    setMessages([]);
+    setHasMoreMessages(false);
+    setSidebarOpen(false);
+    stickyBottom.current = true;
+  };
 
   const send = async () => {
     const text = input.trim();
@@ -45,6 +157,7 @@ function ChatPage() {
     setInput("");
     setMessages((prev) => [...prev, { role: "user", content: text }]);
     setSending(true);
+    stickyBottom.current = true;
 
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -120,6 +233,8 @@ function ChatPage() {
       }
       void convId;
       if (crisis) setSosOpen(true);
+      // Rafraîchit la sidebar (nouvelle conversation ou maj last_message_at).
+      setSidebarRefreshKey((k) => k + 1);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Connexion interrompue");
     } finally {
@@ -136,24 +251,81 @@ function ChatPage() {
       <SiteHeader />
       <SOSDialog open={sosOpen} onOpenChange={setSosOpen} />
 
-      <main className="container mx-auto flex w-full max-w-3xl flex-1 flex-col px-4 py-6">
-        <div className="mb-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full" style={{ background: "var(--gradient-warm)" }}>
-              <Sparkles className="h-5 w-5 text-primary-foreground" />
-            </div>
-            <div>
-              <h1 className="font-display text-xl font-semibold">PsyBot</h1>
-              <p className="text-xs text-muted-foreground">Écoute bienveillante · 24h/24</p>
-            </div>
+      <main className="container mx-auto flex w-full max-w-6xl flex-1 px-2 py-4 md:px-4 md:py-6">
+        <div className="grid w-full flex-1 gap-4 md:grid-cols-[280px_1fr]">
+          {/* Sidebar desktop */}
+          <div className="hidden h-[calc(100vh-8rem)] overflow-hidden rounded-xl border border-border md:block">
+            <ConversationsSidebar
+              activeId={conversationId}
+              onSelectConversation={(id) => loadConversation(id)}
+              onSelectMessage={(cid, mid) => loadConversation(cid, mid)}
+              onNew={newConversation}
+              refreshKey={sidebarRefreshKey}
+            />
           </div>
-          <Button variant="outline" size="sm" onClick={() => setSosOpen(true)} className="border-destructive/40 text-destructive hover:bg-destructive/10">
-            <AlertCircle className="mr-1 h-4 w-4" /> SOS
-          </Button>
-        </div>
 
-        <Card className="flex flex-1 flex-col overflow-hidden">
-          <div ref={scrollRef} className="flex-1 space-y-4 overflow-y-auto p-5">
+          {/* Sidebar mobile (drawer) */}
+          {sidebarOpen && (
+            <div className="fixed inset-0 z-50 md:hidden">
+              <div className="absolute inset-0 bg-background/80 backdrop-blur" onClick={() => setSidebarOpen(false)} />
+              <div className="absolute inset-y-0 left-0 w-[85%] max-w-xs bg-card shadow-xl">
+                <div className="flex items-center justify-between border-b border-border p-2">
+                  <span className="font-display text-sm font-semibold">Mes conversations</span>
+                  <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => setSidebarOpen(false)}>
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+                <div className="h-[calc(100%-2.75rem)]">
+                  <ConversationsSidebar
+                    activeId={conversationId}
+                    onSelectConversation={(id) => loadConversation(id)}
+                    onSelectMessage={(cid, mid) => loadConversation(cid, mid)}
+                    onNew={newConversation}
+                    refreshKey={sidebarRefreshKey}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="flex min-w-0 flex-col">
+            <div className="mb-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setSidebarOpen(true)}>
+                  <Menu className="h-5 w-5" />
+                </Button>
+                <div className="flex h-10 w-10 items-center justify-center rounded-full" style={{ background: "var(--gradient-warm)" }}>
+                  <Sparkles className="h-5 w-5 text-primary-foreground" />
+                </div>
+                <div>
+                  <h1 className="font-display text-xl font-semibold">PsyBot</h1>
+                  <p className="text-xs text-muted-foreground">Écoute bienveillante · 24h/24</p>
+                </div>
+              </div>
+              <Button variant="outline" size="sm" onClick={() => setSosOpen(true)} className="border-destructive/40 text-destructive hover:bg-destructive/10">
+                <AlertCircle className="mr-1 h-4 w-4" /> SOS
+              </Button>
+            </div>
+
+            <Card className="flex h-[calc(100vh-12rem)] flex-1 flex-col overflow-hidden">
+              <div ref={scrollRef} onScroll={onScroll} className="flex-1 space-y-4 overflow-y-auto p-5">
+                {hasMoreMessages && (
+                  <div className="flex justify-center">
+                    <Button
+                      variant="outline" size="sm"
+                      onClick={loadMoreMessages}
+                      disabled={loadingMore}
+                      className="h-7 text-xs"
+                    >
+                      {loadingMore ? <Loader2 className="h-3 w-3 animate-spin" /> : "Charger les messages plus anciens"}
+                    </Button>
+                  </div>
+                )}
+                {loadingConv && (
+                  <div className="flex justify-center py-6">
+                    <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                  </div>
+                )}
             {messages.length === 0 && (
               <div className="mx-auto max-w-md py-12 text-center">
                 <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary">
@@ -181,13 +353,22 @@ function ChatPage() {
               </div>
             )}
             {messages.map((m, i) => (
-              <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
+              <div
+                key={m.id ?? i}
+                ref={(el) => {
+                  if (m.id) {
+                    if (el) messageRefs.current.set(m.id, el);
+                    else messageRefs.current.delete(m.id);
+                  }
+                }}
+                className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
+              >
                 <div
-                  className={`max-w-[80%] rounded-2xl px-4 py-2.5 ${
+                  className={`max-w-[80%] rounded-2xl px-4 py-2.5 transition-shadow ${
                     m.role === "user"
                       ? "bg-primary text-primary-foreground"
                       : "bg-muted text-foreground"
-                  }`}
+                  } ${highlightId && m.id === highlightId ? "ring-2 ring-secondary ring-offset-2 ring-offset-background" : ""}`}
                 >
                   {m.role === "assistant" ? (
                     <div className="prose prose-sm max-w-none text-foreground prose-p:my-1.5 prose-strong:text-foreground">
@@ -196,16 +377,11 @@ function ChatPage() {
                   ) : (
                     <p className="whitespace-pre-wrap">{m.content}</p>
                   )}
-                  {m.metadata?.recommend_expert && (
-                    <div className="mt-3 border-t border-border/50 pt-3">
-                      <Link
-                        to="/experts"
-                        className="inline-flex items-center gap-1 text-sm font-medium text-secondary hover:underline"
-                      >
-                        Voir les {m.metadata.recommend_expert}s recommandés
-                        <ArrowRight className="h-3.5 w-3.5" />
-                      </Link>
-                    </div>
+                  {m.role === "assistant" && m.metadata?.recommend_expert && (
+                    <ExpertRecommendations
+                      type={m.metadata.recommend_expert as ExpertType}
+                      conversationId={conversationId}
+                    />
                   )}
                 </div>
               </div>
@@ -217,9 +393,9 @@ function ChatPage() {
                 </div>
               </div>
             )}
-          </div>
+              </div>
 
-          <div className="border-t border-border bg-card p-3">
+              <div className="border-t border-border bg-card p-3">
             <div className="flex items-end gap-2">
               <Textarea
                 value={input}
@@ -242,8 +418,10 @@ function ChatPage() {
             <p className="mt-2 text-xs text-muted-foreground">
               PsyBot n'est pas un thérapeute. En cas d'urgence, appelez le <button onClick={() => setSosOpen(true)} className="font-medium text-destructive underline">136</button>.
             </p>
+              </div>
+            </Card>
           </div>
-        </Card>
+        </div>
       </main>
     </div>
   );
