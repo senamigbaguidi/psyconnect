@@ -85,6 +85,54 @@ export type Database = {
           },
         ]
       }
+      crisis_events: {
+        Row: {
+          ai_flagged: boolean
+          conversation_id: string
+          created_at: string
+          excerpt: string | null
+          id: string
+          intensity_score: number
+          matched_keywords: string[]
+          message_id: string | null
+          resolved: boolean
+          resolved_at: string | null
+          resolved_by: string | null
+          severity: Database["public"]["Enums"]["crisis_severity"]
+          user_id: string
+        }
+        Insert: {
+          ai_flagged?: boolean
+          conversation_id: string
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          intensity_score?: number
+          matched_keywords?: string[]
+          message_id?: string | null
+          resolved?: boolean
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity: Database["public"]["Enums"]["crisis_severity"]
+          user_id: string
+        }
+        Update: {
+          ai_flagged?: boolean
+          conversation_id?: string
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          intensity_score?: number
+          matched_keywords?: string[]
+          message_id?: string | null
+          resolved?: boolean
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: Database["public"]["Enums"]["crisis_severity"]
+          user_id?: string
+        }
+        Relationships: []
+      }
       expert_applications: {
         Row: {
           address: string
@@ -256,6 +304,42 @@ export type Database = {
         }
         Relationships: []
       }
+      referral_tickets: {
+        Row: {
+          conversation_id: string | null
+          created_at: string
+          expert_id: string | null
+          expert_type: Database["public"]["Enums"]["expert_type"]
+          id: string
+          message: string | null
+          status: Database["public"]["Enums"]["referral_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          conversation_id?: string | null
+          created_at?: string
+          expert_id?: string | null
+          expert_type: Database["public"]["Enums"]["expert_type"]
+          id?: string
+          message?: string | null
+          status?: Database["public"]["Enums"]["referral_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          conversation_id?: string | null
+          created_at?: string
+          expert_id?: string | null
+          expert_type?: Database["public"]["Enums"]["expert_type"]
+          id?: string
+          message?: string | null
+          status?: Database["public"]["Enums"]["referral_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -290,11 +374,15 @@ export type Database = {
         }
         Returns: boolean
       }
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { "": string }; Returns: string[] }
     }
     Enums: {
       app_role: "patient" | "expert" | "admin"
+      crisis_severity: "low" | "medium" | "high"
       expert_status: "pending" | "approved" | "rejected"
       expert_type: "psychiatre" | "psychologue" | "coach" | "autre"
+      referral_status: "open" | "contacted" | "closed"
       subscription_tier: "none" | "standard" | "premium"
     }
     CompositeTypes: {
@@ -424,8 +512,10 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["patient", "expert", "admin"],
+      crisis_severity: ["low", "medium", "high"],
       expert_status: ["pending", "approved", "rejected"],
       expert_type: ["psychiatre", "psychologue", "coach", "autre"],
+      referral_status: ["open", "contacted", "closed"],
       subscription_tier: ["none", "standard", "premium"],
     },
   },
