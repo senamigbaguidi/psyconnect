@@ -1,210 +1,156 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState, type FormEvent } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useEffect } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
-import { toast } from "sonner";
+import { BloomGlyph, ShieldHeartGlyph } from "@/components/icons/MindIcons";
+import { ArrowRight } from "lucide-react";
 
 type SignupSearch = { as?: "patient" | "expert" };
 
 export const Route = createFileRoute("/signup")({
   validateSearch: (s: Record<string, unknown>): SignupSearch => ({
-    as: s.as === "expert" ? "expert" : "patient",
+    as: s.as === "patient" ? "patient" : s.as === "expert" ? "expert" : undefined,
   }),
-  component: SignupPage,
+  component: SignupChoice,
 });
 
-function SignupPage() {
+function SignupChoice() {
   const navigate = useNavigate();
-  const search = Route.useSearch();
-  const [tab, setTab] = useState<"patient" | "expert">(search.as ?? "patient");
+  const { as } = Route.useSearch();
+
+  // Backwards-compat: if someone lands on /signup?as=patient|expert, redirect them.
+  useEffect(() => {
+    if (as === "patient") navigate({ to: "/signup/patient", replace: true });
+    else if (as === "expert") navigate({ to: "/signup/expert", replace: true });
+  }, [as, navigate]);
 
   return (
     <div className="min-h-screen bg-background">
+      <div
+        aria-hidden
+        className="absolute inset-x-0 top-0 -z-10 h-[600px] opacity-60"
+        style={{ backgroundImage: "var(--gradient-aurora)" }}
+      />
       <SiteHeader />
-      <div className="container mx-auto px-4 py-12">
-        <div className="mx-auto w-full max-w-2xl rounded-2xl border border-border bg-card p-8 shadow-[var(--shadow-soft)]">
-          <h1 className="font-display text-3xl font-semibold">Rejoignez PsyConnect</h1>
-          <Tabs value={tab} onValueChange={(v) => setTab(v as "patient" | "expert")} className="mt-6">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="patient">Patient</TabsTrigger>
-              <TabsTrigger value="expert">Expert</TabsTrigger>
-            </TabsList>
-            <TabsContent value="patient" className="mt-6">
-              <PatientForm onDone={() => navigate({ to: "/login" })} />
-            </TabsContent>
-            <TabsContent value="expert" className="mt-6">
-              <ExpertForm onDone={() => navigate({ to: "/login" })} />
-            </TabsContent>
-          </Tabs>
-          <p className="mt-6 text-center text-sm text-muted-foreground">
-            Déjà un compte ?{" "}
-            <Link to="/login" className="font-medium text-primary hover:underline">Connexion</Link>
+      <div className="container mx-auto px-4 py-16 md:py-24">
+        <div className="mx-auto max-w-3xl text-center">
+          <span className="inline-block text-xs font-medium uppercase tracking-[0.2em] text-secondary">
+            Bienvenue
+          </span>
+          <h1 className="mt-3 font-display text-4xl font-semibold leading-tight md:text-5xl">
+            Comment souhaitez-vous{" "}
+            <span
+              className="bg-clip-text text-transparent"
+              style={{ backgroundImage: "var(--gradient-calm)" }}
+            >
+              rejoindre PsyConnect ?
+            </span>
+          </h1>
+          <p className="mx-auto mt-4 max-w-xl text-base text-muted-foreground md:text-lg">
+            Choisissez le parcours qui vous correspond. Vous pourrez toujours changer plus tard.
           </p>
         </div>
+
+        <div className="mx-auto mt-14 grid max-w-4xl gap-6 md:grid-cols-2">
+          <ChoiceCard
+            to="/signup/patient"
+            icon={<BloomGlyph size={36} />}
+            tone="primary"
+            title="Je cherche du soutien"
+            subtitle="Patient"
+            desc="Parlez à PsyBot, trouvez un expert, prenez soin de votre bien-être mental."
+            features={["PsyBot illimité", "Annuaire d'experts validés", "Anonymat possible"]}
+          />
+          <ChoiceCard
+            to="/signup/expert"
+            icon={<ShieldHeartGlyph size={36} />}
+            tone="secondary"
+            title="Je suis un professionnel"
+            subtitle="Expert"
+            desc="Psychologue, psychiatre ou coach ? Rejoignez notre annuaire vérifié."
+            features={["Profil pro vérifié", "Mises en relation", "Outils dédiés"]}
+          />
+        </div>
+
+        <p className="mt-10 text-center text-sm text-muted-foreground">
+          Déjà inscrit·e ?{" "}
+          <Link to="/login" className="font-medium text-primary hover:underline">
+            Se connecter
+          </Link>
+        </p>
       </div>
     </div>
   );
 }
 
-function PatientForm({ onDone }: { onDone: () => void }) {
-  const [form, setForm] = useState({ firstName: "", lastName: "", email: "", phone: "", password: "", anonymous: false });
-  const [loading, setLoading] = useState(false);
-
-  const submit = async (e: FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    const { error } = await supabase.auth.signUp({
-      email: form.email,
-      password: form.password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/dashboard`,
-        data: {
-          first_name: form.firstName,
-          last_name: form.lastName,
-          phone: form.phone,
-          is_anonymous: form.anonymous,
-          preferred_language: "fr",
-          requested_role: "patient",
-        },
-      },
-    });
-    setLoading(false);
-    if (error) { toast.error(error.message); return; }
-    toast.success("Vérifiez votre email pour confirmer votre inscription.");
-    onDone();
-  };
-
+function ChoiceCard({
+  to,
+  icon,
+  tone,
+  title,
+  subtitle,
+  desc,
+  features,
+}: {
+  to: "/signup/patient" | "/signup/expert";
+  icon: React.ReactNode;
+  tone: "primary" | "secondary";
+  title: string;
+  subtitle: string;
+  desc: string;
+  features: string[];
+}) {
+  const toneClass =
+    tone === "primary"
+      ? "bg-primary/10 text-primary ring-primary/20"
+      : "bg-secondary/15 text-secondary ring-secondary/20";
   return (
-    <form onSubmit={submit} className="space-y-4">
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Field label="Prénom" value={form.firstName} onChange={(v) => setForm({ ...form, firstName: v })} required />
-        <Field label="Nom" value={form.lastName} onChange={(v) => setForm({ ...form, lastName: v })} required />
+    <Link
+      to={to}
+      className="group relative flex flex-col overflow-hidden rounded-3xl border border-border bg-card p-8 shadow-[var(--shadow-soft)] transition-all hover:-translate-y-1 hover:border-primary/30 hover:shadow-[var(--shadow-calm)]"
+    >
+      <div
+        aria-hidden
+        className="absolute -right-16 -top-16 h-48 w-48 rounded-full opacity-0 blur-3xl transition-opacity duration-500 group-hover:opacity-40"
+        style={{
+          background:
+            tone === "primary" ? "var(--gradient-calm)" : "var(--gradient-sage)",
+        }}
+      />
+      <div
+        className={`relative inline-flex h-16 w-16 items-center justify-center rounded-2xl ring-1 ${toneClass}`}
+      >
+        {icon}
       </div>
-      <Field label="Email" type="email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} required />
-      <Field label="Téléphone" value={form.phone} onChange={(v) => setForm({ ...form, phone: v })} />
-      <Field label="Mot de passe" type="password" value={form.password} onChange={(v) => setForm({ ...form, password: v })} required />
-      <label className="flex items-center gap-2 text-sm">
-        <Checkbox checked={form.anonymous} onCheckedChange={(c) => setForm({ ...form, anonymous: !!c })} />
-        Rester anonyme face aux experts
-      </label>
-      <Button type="submit" className="w-full h-11" disabled={loading}>
-        {loading ? "Chargement..." : "Créer mon compte"}
-      </Button>
-    </form>
-  );
-}
-
-function ExpertForm({ onDone }: { onDone: () => void }) {
-  const [form, setForm] = useState({
-    firstName: "", lastName: "", email: "", phone: "", password: "",
-    expertType: "psychologue" as "psychiatre" | "psychologue" | "coach" | "autre",
-    description: "", cabinet: "", address: "",
-  });
-  const [diploma, setDiploma] = useState<File | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  const submit = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!diploma) { toast.error("Veuillez joindre votre diplôme."); return; }
-    setLoading(true);
-
-    const { data: signUpData, error: signUpErr } = await supabase.auth.signUp({
-      email: form.email,
-      password: form.password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/dashboard`,
-        data: {
-          first_name: form.firstName,
-          last_name: form.lastName,
-          phone: form.phone,
-          preferred_language: "fr",
-          requested_role: "expert",
-        },
-      },
-    });
-    if (signUpErr || !signUpData.user) {
-      setLoading(false);
-      toast.error(signUpErr?.message ?? "Une erreur est survenue");
-      return;
-    }
-    const userId = signUpData.user.id;
-    if (!signUpData.session) {
-      await supabase.auth.signInWithPassword({ email: form.email, password: form.password });
-    }
-    const ext = diploma.name.split(".").pop() ?? "bin";
-    const path = `${userId}/diploma-${Date.now()}.${ext}`;
-    const { error: upErr } = await supabase.storage.from("diplomas").upload(path, diploma, { upsert: true });
-    if (upErr) { setLoading(false); toast.error(upErr.message); return; }
-
-    const { error: appErr } = await supabase.from("expert_applications").insert({
-      user_id: userId,
-      expert_type: form.expertType,
-      description: form.description,
-      cabinet_name: form.cabinet || null,
-      address: form.address,
-      diploma_path: path,
-    });
-    setLoading(false);
-    if (appErr) { toast.error(appErr.message); return; }
-    toast.success("Dossier envoyé. Vous recevrez une notification après validation.");
-    onDone();
-  };
-
-  return (
-    <form onSubmit={submit} className="space-y-4">
-      <p className="rounded-lg border border-accent/40 bg-accent/15 p-3 text-sm text-accent-foreground">
-        Votre dossier sera examiné manuellement par un administrateur.
+      <p className="relative mt-6 text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+        {subtitle}
       </p>
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Field label="Prénom" value={form.firstName} onChange={(v) => setForm({ ...form, firstName: v })} required />
-        <Field label="Nom" value={form.lastName} onChange={(v) => setForm({ ...form, lastName: v })} required />
+      <h2 className="relative mt-1 font-display text-2xl font-semibold md:text-3xl">
+        {title}
+      </h2>
+      <p className="relative mt-3 text-sm leading-relaxed text-muted-foreground">
+        {desc}
+      </p>
+      <ul className="relative mt-5 space-y-2 text-sm">
+        {features.map((f) => (
+          <li key={f} className="flex items-center gap-2">
+            <span
+              aria-hidden
+              className="inline-block h-1.5 w-1.5 rounded-full"
+              style={{
+                background:
+                  tone === "primary"
+                    ? "var(--primary)"
+                    : "var(--secondary)",
+              }}
+            />
+            {f}
+          </li>
+        ))}
+      </ul>
+      <div className="relative mt-6 inline-flex items-center gap-2 text-sm font-medium text-primary">
+        Continuer
+        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
       </div>
-      <Field label="Email" type="email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} required />
-      <Field label="Téléphone" value={form.phone} onChange={(v) => setForm({ ...form, phone: v })} required />
-      <Field label="Mot de passe" type="password" value={form.password} onChange={(v) => setForm({ ...form, password: v })} required />
-      <div className="space-y-2">
-        <Label>Type de profil</Label>
-        <Select value={form.expertType} onValueChange={(v) => setForm({ ...form, expertType: v as typeof form.expertType })}>
-          <SelectTrigger><SelectValue /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="psychiatre">Psychiatre</SelectItem>
-            <SelectItem value="psychologue">Psychologue</SelectItem>
-            <SelectItem value="coach">Coach motivateur</SelectItem>
-            <SelectItem value="autre">Autre</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-      <div className="space-y-2">
-        <Label>Description de votre pratique</Label>
-        <Textarea required rows={4} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
-      </div>
-      <Field label="Nom du cabinet (optionnel)" value={form.cabinet} onChange={(v) => setForm({ ...form, cabinet: v })} />
-      <Field label="Adresse" value={form.address} onChange={(v) => setForm({ ...form, address: v })} required />
-      <div className="space-y-2">
-        <Label>Diplôme ou attestation (PDF/Image)</Label>
-        <Input type="file" accept="application/pdf,image/*" required onChange={(e) => setDiploma(e.target.files?.[0] ?? null)} />
-      </div>
-      <Button type="submit" className="w-full h-11" disabled={loading}>
-        {loading ? "Chargement..." : "Créer mon compte"}
-      </Button>
-    </form>
-  );
-}
-
-function Field({
-  label, value, onChange, type = "text", required,
-}: { label: string; value: string; onChange: (v: string) => void; type?: string; required?: boolean }) {
-  return (
-    <div className="space-y-2">
-      <Label>{label}</Label>
-      <Input type={type} value={value} required={required} onChange={(e) => onChange(e.target.value)} />
-    </div>
+    </Link>
   );
 }
