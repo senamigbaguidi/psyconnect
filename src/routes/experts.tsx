@@ -104,7 +104,7 @@ function ExpertsSearchPage() {
             </Card>
           )}
           {filtered.map((e) => (
-            <Card key={e.id} className={`p-6 transition-all hover:shadow-[var(--shadow-warm)] ${e.subscription_tier === "premium" ? "border-primary/40 bg-primary/5" : ""}`}>
+            <Card key={e.id} className={`p-6 transition-all hover:shadow-[var(--shadow-calm)] ${e.subscription_tier === "premium" ? "border-primary/40 bg-primary/5" : ""}`}>
               <div className="flex items-start justify-between gap-4">
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">

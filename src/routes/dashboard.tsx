@@ -88,7 +88,7 @@ function AdminDashboard() {
 function SoonCard({ icon, title, tone }: { icon: React.ReactNode; title: string; tone?: "destructive" }) {
   const cls = tone === "destructive" ? "bg-destructive/10 text-destructive" : "bg-primary/10 text-primary";
   return (
-    <Card className="p-6 transition-all hover:-translate-y-1 hover:shadow-[var(--shadow-warm)]">
+    <Card className="p-6 transition-all hover:-translate-y-1 hover:shadow-[var(--shadow-calm)]">
       <div className={`mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl ${cls}`}>{icon}</div>
       <p className="font-display text-lg font-semibold">{title}</p>
       <p className="mt-1 text-xs uppercase tracking-wider text-muted-foreground">Bientôt disponible</p>
@@ -99,7 +99,7 @@ function SoonCard({ icon, title, tone }: { icon: React.ReactNode; title: string;
 function ActionCard({ icon, title, to }: { icon: React.ReactNode; title: string; to: "/experts" | "/feed" | "/chat" }) {
   return (
     <Link to={to} className="block">
-      <Card className="p-6 transition-all hover:-translate-y-1 hover:shadow-[var(--shadow-warm)]">
+      <Card className="p-6 transition-all hover:-translate-y-1 hover:shadow-[var(--shadow-calm)]">
         <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">{icon}</div>
         <p className="font-display text-lg font-semibold">{title}</p>
         <p className="mt-1 text-xs uppercase tracking-wider text-primary">Disponible</p>
