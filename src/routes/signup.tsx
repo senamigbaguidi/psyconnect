@@ -92,6 +92,7 @@ function ChoiceCard({
   subtitle,
   desc,
   features,
+  ctaLabel,
 }: {
   to: "/signup/patient" | "/signup/expert";
   icon: React.ReactNode;
@@ -100,6 +101,7 @@ function ChoiceCard({
   subtitle: string;
   desc: string;
   features: string[];
+  ctaLabel: string;
 }) {
   const toneClass =
     tone === "primary"
@@ -108,7 +110,8 @@ function ChoiceCard({
   return (
     <Link
       to={to}
-      className="group relative flex flex-col overflow-hidden rounded-3xl border border-border bg-card p-8 shadow-[var(--shadow-soft)] transition-all hover:-translate-y-1 hover:border-primary/30 hover:shadow-[var(--shadow-calm)]"
+      aria-label={`${title} — ${ctaLabel}`}
+      className="group relative flex flex-col overflow-hidden rounded-3xl border border-border bg-card p-8 shadow-[var(--shadow-soft)] transition-all hover:-translate-y-1 hover:border-primary/30 hover:shadow-[var(--shadow-calm)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
     >
       <div
         aria-hidden
@@ -149,10 +152,14 @@ function ChoiceCard({
           </li>
         ))}
       </ul>
-      <div className="relative mt-6 inline-flex items-center gap-2 text-sm font-medium text-primary">
-        Continuer
-        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-      </div>
+      <span
+        className={`relative mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold text-white shadow-[var(--shadow-calm)] transition-transform group-hover:scale-[1.02] ${
+          tone === "primary" ? "bg-primary" : "bg-secondary"
+        }`}
+      >
+        {ctaLabel}
+        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
+      </span>
     </Link>
   );
 }
