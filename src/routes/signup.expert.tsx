@@ -14,8 +14,9 @@ import {
 } from "@/components/ui/select";
 import { SiteHeader } from "@/components/SiteHeader";
 import { ShieldHeartGlyph } from "@/components/icons/MindIcons";
-import { ArrowLeft, ArrowRight, Eye, EyeOff, Upload } from "lucide-react";
+import { ArrowLeft, ArrowRight, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
+import { FileUpload, type FileUploadStatus } from "@/components/FileUpload";
 
 export const Route = createFileRoute("/signup/expert")({
   component: ExpertSignup,
@@ -38,6 +39,8 @@ function ExpertSignup() {
   const [showPwd, setShowPwd] = useState(false);
   const [diploma, setDiploma] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
+  const [uploadStatus, setUploadStatus] = useState<FileUploadStatus>("idle");
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const validateStep1 = () => {
     if (!form.firstName || !form.lastName || !form.email || !form.phone) {
@@ -87,14 +90,24 @@ function ExpertSignup() {
     }
     const ext = diploma.name.split(".").pop() ?? "bin";
     const path = `${userId}/diploma-${Date.now()}.${ext}`;
+    setUploadStatus("uploading");
+    setUploadProgress(10);
+    // Simulate progress (Supabase JS SDK doesn't expose granular progress).
+    const tick = setInterval(() => {
+      setUploadProgress((p) => (p < 85 ? p + 8 : p));
+    }, 250);
     const { error: upErr } = await supabase.storage
       .from("diplomas")
       .upload(path, diploma, { upsert: true });
+    clearInterval(tick);
     if (upErr) {
+      setUploadStatus("error");
       setLoading(false);
       toast.error(upErr.message);
       return;
     }
+    setUploadProgress(100);
+    setUploadStatus("done");
 
     const { error: appErr } = await supabase.from("expert_applications").insert({
       user_id: userId,
@@ -299,23 +312,16 @@ function ExpertSignup() {
                   required
                 />
                 <div className="space-y-2">
-                  <Label>Diplôme ou attestation</Label>
-                  <label
-                    htmlFor="diploma"
-                    className="flex cursor-pointer items-center gap-3 rounded-xl border border-dashed border-border bg-muted/40 p-4 text-sm transition-colors hover:bg-muted"
-                  >
-                    <Upload className="h-5 w-5 text-secondary" />
-                    <span className="flex-1 truncate">
-                      {diploma ? diploma.name : "Cliquez pour téléverser (PDF ou image)"}
-                    </span>
-                  </label>
-                  <Input
+                  <Label htmlFor="diploma">Diplôme ou attestation</Label>
+                  <FileUpload
                     id="diploma"
-                    type="file"
                     accept="application/pdf,image/*"
                     required
-                    className="hidden"
-                    onChange={(e) => setDiploma(e.target.files?.[0] ?? null)}
+                    label="Téléverser votre diplôme"
+                    helper="PDF ou image (jusqu'à 8 Mo). Les images sont automatiquement optimisées."
+                    status={uploadStatus}
+                    progress={uploadProgress}
+                    onFileChange={setDiploma}
                   />
                 </div>
                 <div className="flex gap-3">

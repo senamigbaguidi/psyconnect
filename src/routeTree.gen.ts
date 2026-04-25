@@ -9,7 +9,9 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VoiceRouteImport } from './routes/voice'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as FeedRouteImport } from './routes/feed'
 import { Route as ExpertsRouteImport } from './routes/experts'
@@ -20,14 +22,25 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as SignupPatientRouteImport } from './routes/signup.patient'
 import { Route as SignupExpertRouteImport } from './routes/signup.expert'
 import { Route as ApiReferralsRouteImport } from './routes/api/referrals'
+import { Route as ApiRealtimeTokenRouteImport } from './routes/api/realtime-token'
 import { Route as ApiConversationsRouteImport } from './routes/api/conversations'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AdminExpertsRouteImport } from './routes/admin.experts'
 import { Route as ApiConversationsIdMessagesRouteImport } from './routes/api/conversations.$id.messages'
 
+const VoiceRoute = VoiceRouteImport.update({
+  id: '/voice',
+  path: '/voice',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -80,6 +93,11 @@ const ApiReferralsRoute = ApiReferralsRouteImport.update({
   path: '/api/referrals',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiRealtimeTokenRoute = ApiRealtimeTokenRouteImport.update({
+  id: '/api/realtime-token',
+  path: '/api/realtime-token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiConversationsRoute = ApiConversationsRouteImport.update({
   id: '/api/conversations',
   path: '/api/conversations',
@@ -110,10 +128,13 @@ export interface FileRoutesByFullPath {
   '/experts': typeof ExpertsRoute
   '/feed': typeof FeedRoute
   '/login': typeof LoginRoute
+  '/onboarding': typeof OnboardingRoute
   '/signup': typeof SignupRouteWithChildren
+  '/voice': typeof VoiceRoute
   '/admin/experts': typeof AdminExpertsRoute
   '/api/chat': typeof ApiChatRoute
   '/api/conversations': typeof ApiConversationsRouteWithChildren
+  '/api/realtime-token': typeof ApiRealtimeTokenRoute
   '/api/referrals': typeof ApiReferralsRoute
   '/signup/expert': typeof SignupExpertRoute
   '/signup/patient': typeof SignupPatientRoute
@@ -127,10 +148,13 @@ export interface FileRoutesByTo {
   '/experts': typeof ExpertsRoute
   '/feed': typeof FeedRoute
   '/login': typeof LoginRoute
+  '/onboarding': typeof OnboardingRoute
   '/signup': typeof SignupRouteWithChildren
+  '/voice': typeof VoiceRoute
   '/admin/experts': typeof AdminExpertsRoute
   '/api/chat': typeof ApiChatRoute
   '/api/conversations': typeof ApiConversationsRouteWithChildren
+  '/api/realtime-token': typeof ApiRealtimeTokenRoute
   '/api/referrals': typeof ApiReferralsRoute
   '/signup/expert': typeof SignupExpertRoute
   '/signup/patient': typeof SignupPatientRoute
@@ -145,10 +169,13 @@ export interface FileRoutesById {
   '/experts': typeof ExpertsRoute
   '/feed': typeof FeedRoute
   '/login': typeof LoginRoute
+  '/onboarding': typeof OnboardingRoute
   '/signup': typeof SignupRouteWithChildren
+  '/voice': typeof VoiceRoute
   '/admin/experts': typeof AdminExpertsRoute
   '/api/chat': typeof ApiChatRoute
   '/api/conversations': typeof ApiConversationsRouteWithChildren
+  '/api/realtime-token': typeof ApiRealtimeTokenRoute
   '/api/referrals': typeof ApiReferralsRoute
   '/signup/expert': typeof SignupExpertRoute
   '/signup/patient': typeof SignupPatientRoute
@@ -164,10 +191,13 @@ export interface FileRouteTypes {
     | '/experts'
     | '/feed'
     | '/login'
+    | '/onboarding'
     | '/signup'
+    | '/voice'
     | '/admin/experts'
     | '/api/chat'
     | '/api/conversations'
+    | '/api/realtime-token'
     | '/api/referrals'
     | '/signup/expert'
     | '/signup/patient'
@@ -181,10 +211,13 @@ export interface FileRouteTypes {
     | '/experts'
     | '/feed'
     | '/login'
+    | '/onboarding'
     | '/signup'
+    | '/voice'
     | '/admin/experts'
     | '/api/chat'
     | '/api/conversations'
+    | '/api/realtime-token'
     | '/api/referrals'
     | '/signup/expert'
     | '/signup/patient'
@@ -198,10 +231,13 @@ export interface FileRouteTypes {
     | '/experts'
     | '/feed'
     | '/login'
+    | '/onboarding'
     | '/signup'
+    | '/voice'
     | '/admin/experts'
     | '/api/chat'
     | '/api/conversations'
+    | '/api/realtime-token'
     | '/api/referrals'
     | '/signup/expert'
     | '/signup/patient'
@@ -216,20 +252,37 @@ export interface RootRouteChildren {
   ExpertsRoute: typeof ExpertsRoute
   FeedRoute: typeof FeedRoute
   LoginRoute: typeof LoginRoute
+  OnboardingRoute: typeof OnboardingRoute
   SignupRoute: typeof SignupRouteWithChildren
+  VoiceRoute: typeof VoiceRoute
   AdminExpertsRoute: typeof AdminExpertsRoute
   ApiChatRoute: typeof ApiChatRoute
   ApiConversationsRoute: typeof ApiConversationsRouteWithChildren
+  ApiRealtimeTokenRoute: typeof ApiRealtimeTokenRoute
   ApiReferralsRoute: typeof ApiReferralsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/voice': {
+      id: '/voice'
+      path: '/voice'
+      fullPath: '/voice'
+      preLoaderRoute: typeof VoiceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/signup': {
       id: '/signup'
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -302,6 +355,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiReferralsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/realtime-token': {
+      id: '/api/realtime-token'
+      path: '/api/realtime-token'
+      fullPath: '/api/realtime-token'
+      preLoaderRoute: typeof ApiRealtimeTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/conversations': {
       id: '/api/conversations'
       path: '/api/conversations'
@@ -365,10 +425,13 @@ const rootRouteChildren: RootRouteChildren = {
   ExpertsRoute: ExpertsRoute,
   FeedRoute: FeedRoute,
   LoginRoute: LoginRoute,
+  OnboardingRoute: OnboardingRoute,
   SignupRoute: SignupRouteWithChildren,
+  VoiceRoute: VoiceRoute,
   AdminExpertsRoute: AdminExpertsRoute,
   ApiChatRoute: ApiChatRoute,
   ApiConversationsRoute: ApiConversationsRouteWithChildren,
+  ApiRealtimeTokenRoute: ApiRealtimeTokenRoute,
   ApiReferralsRoute: ApiReferralsRoute,
 }
 export const routeTree = rootRouteImport
