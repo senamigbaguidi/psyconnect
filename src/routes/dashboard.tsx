@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Card } from "@/components/ui/card";
-import { BookOpen, Phone } from "lucide-react";
+import { BookOpen, Phone, Mic } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -85,6 +85,7 @@ function PatientDashboard({ name, userId }: { name: string; userId: string }) {
 
         <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           <ActionCard icon={<BrainGlyph size={24} />} title="Parler à PsyBot" desc="Une oreille bienveillante, à toute heure." to="/chat" />
+          <ActionCard icon={<Mic className="h-5 w-5" />} title="Conversation vocale" desc="Mode mains-libres, parlez naturellement." to="/voice" />
           <ActionCard icon={<NeuronGlyph size={24} />} title="Trouver un expert" desc="Annuaire de pros validés près de chez vous." to="/experts" />
           <ActionCard icon={<DialogueGlyph size={24} />} title="Fil de publications" desc="Articles & conseils des professionnels." to="/feed" />
           <SoonCard icon={<BookOpen className="h-5 w-5" />} title="Journal" desc="Écrivez vos pensées en toute sécurité." />
@@ -138,7 +139,7 @@ function ActionCard({
   icon: React.ReactNode;
   title: string;
   desc: string;
-  to: "/experts" | "/feed" | "/chat";
+  to: "/experts" | "/feed" | "/chat" | "/voice";
 }) {
   return (
     <Link to={to} className="block">
