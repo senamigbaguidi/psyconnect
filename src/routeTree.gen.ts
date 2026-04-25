@@ -20,6 +20,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiConversationsRouteImport } from './routes/api/conversations'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AdminExpertsRouteImport } from './routes/admin.experts'
+import { Route as ApiConversationsIdMessagesRouteImport } from './routes/api/conversations.$id.messages'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -76,6 +77,12 @@ const AdminExpertsRoute = AdminExpertsRouteImport.update({
   path: '/admin/experts',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiConversationsIdMessagesRoute =
+  ApiConversationsIdMessagesRouteImport.update({
+    id: '/$id/messages',
+    path: '/$id/messages',
+    getParentRoute: () => ApiConversationsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -88,7 +95,8 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/admin/experts': typeof AdminExpertsRoute
   '/api/chat': typeof ApiChatRoute
-  '/api/conversations': typeof ApiConversationsRoute
+  '/api/conversations': typeof ApiConversationsRouteWithChildren
+  '/api/conversations/$id/messages': typeof ApiConversationsIdMessagesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -101,7 +109,8 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/admin/experts': typeof AdminExpertsRoute
   '/api/chat': typeof ApiChatRoute
-  '/api/conversations': typeof ApiConversationsRoute
+  '/api/conversations': typeof ApiConversationsRouteWithChildren
+  '/api/conversations/$id/messages': typeof ApiConversationsIdMessagesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -115,7 +124,8 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/admin/experts': typeof AdminExpertsRoute
   '/api/chat': typeof ApiChatRoute
-  '/api/conversations': typeof ApiConversationsRoute
+  '/api/conversations': typeof ApiConversationsRouteWithChildren
+  '/api/conversations/$id/messages': typeof ApiConversationsIdMessagesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -131,6 +141,7 @@ export interface FileRouteTypes {
     | '/admin/experts'
     | '/api/chat'
     | '/api/conversations'
+    | '/api/conversations/$id/messages'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -144,6 +155,7 @@ export interface FileRouteTypes {
     | '/admin/experts'
     | '/api/chat'
     | '/api/conversations'
+    | '/api/conversations/$id/messages'
   id:
     | '__root__'
     | '/'
@@ -157,6 +169,7 @@ export interface FileRouteTypes {
     | '/admin/experts'
     | '/api/chat'
     | '/api/conversations'
+    | '/api/conversations/$id/messages'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -170,7 +183,7 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   AdminExpertsRoute: typeof AdminExpertsRoute
   ApiChatRoute: typeof ApiChatRoute
-  ApiConversationsRoute: typeof ApiConversationsRoute
+  ApiConversationsRoute: typeof ApiConversationsRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -252,8 +265,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminExpertsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/conversations/$id/messages': {
+      id: '/api/conversations/$id/messages'
+      path: '/$id/messages'
+      fullPath: '/api/conversations/$id/messages'
+      preLoaderRoute: typeof ApiConversationsIdMessagesRouteImport
+      parentRoute: typeof ApiConversationsRoute
+    }
   }
 }
+
+interface ApiConversationsRouteChildren {
+  ApiConversationsIdMessagesRoute: typeof ApiConversationsIdMessagesRoute
+}
+
+const ApiConversationsRouteChildren: ApiConversationsRouteChildren = {
+  ApiConversationsIdMessagesRoute: ApiConversationsIdMessagesRoute,
+}
+
+const ApiConversationsRouteWithChildren =
+  ApiConversationsRoute._addFileChildren(ApiConversationsRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -266,7 +297,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   AdminExpertsRoute: AdminExpertsRoute,
   ApiChatRoute: ApiChatRoute,
-  ApiConversationsRoute: ApiConversationsRoute,
+  ApiConversationsRoute: ApiConversationsRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
