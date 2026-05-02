@@ -185,7 +185,7 @@ function ExpertSignup() {
           </aside>
 
           {/* Right side — multi-step form */}
-          <div className="rounded-3xl border border-border bg-card p-8 shadow-[var(--shadow-soft)] md:p-10">
+          <div className="rounded-3xl border border-border bg-card p-5 shadow-[var(--shadow-soft)] sm:p-8 md:p-10">
             <div className="flex items-center justify-between">
               <p className="text-xs font-medium uppercase tracking-[0.18em] text-secondary">
                 Inscription expert · Étape {step}/2

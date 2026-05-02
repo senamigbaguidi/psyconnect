@@ -67,7 +67,7 @@ function LoginPage() {
           </aside>
 
           {/* Right — form */}
-          <div className="rounded-3xl border border-border bg-card p-8 shadow-[var(--shadow-soft)] md:p-10">
+          <div className="rounded-3xl border border-border bg-card p-5 shadow-[var(--shadow-soft)] sm:p-8 md:p-10">
             <div className="md:hidden mb-6 flex items-center gap-2">
               <PsyConnectMark size={32} />
               <span className="font-display text-xl font-semibold">PsyConnect</span>
