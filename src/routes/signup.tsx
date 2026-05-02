@@ -50,7 +50,7 @@ function SignupChoice() {
           </p>
         </div>
 
-        <div className="mx-auto mt-14 grid max-w-4xl gap-6 md:grid-cols-2">
+        <div className="mx-auto mt-10 grid max-w-4xl gap-5 sm:gap-6 sm:grid-cols-2">
           <ChoiceCard
             to="/signup/patient"
             icon={<BloomGlyph size={36} />}
