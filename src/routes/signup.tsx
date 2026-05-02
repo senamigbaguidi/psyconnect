@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { BloomGlyph, ShieldHeartGlyph } from "@/components/icons/MindIcons";
@@ -15,13 +15,20 @@ export const Route = createFileRoute("/signup")({
 
 function SignupChoice() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { as } = Route.useSearch();
+  const isChoiceRoute = location.pathname === "/signup";
 
   // Backwards-compat: if someone lands on /signup?as=patient|expert, redirect them.
   useEffect(() => {
+    if (!isChoiceRoute) return;
     if (as === "patient") navigate({ to: "/signup/patient", replace: true });
     else if (as === "expert") navigate({ to: "/signup/expert", replace: true });
-  }, [as, navigate]);
+  }, [as, isChoiceRoute, navigate]);
+
+  if (!isChoiceRoute) {
+    return <Outlet />;
+  }
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-background">
