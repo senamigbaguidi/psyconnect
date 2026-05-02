@@ -126,9 +126,9 @@ export function PsyConnectMark({ size = 32, ...rest }: IconProps) {
     <svg {...base(size)} {...rest} viewBox="0 0 40 40">
       <defs>
         <linearGradient id="psy-grad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="oklch(0.52 0.13 235)" />
-          <stop offset="60%" stopColor="oklch(0.62 0.08 155)" />
-          <stop offset="100%" stopColor="oklch(0.78 0.07 290)" />
+          <stop offset="0%" stopColor="oklch(0.268 0.082 287.55)" />
+          <stop offset="55%" stopColor="oklch(0.822 0.068 289.476)" />
+          <stop offset="100%" stopColor="oklch(0.787 0.095 309.547)" />
         </linearGradient>
       </defs>
       <circle cx="20" cy="20" r="16" fill="url(#psy-grad)" opacity="0.18" />

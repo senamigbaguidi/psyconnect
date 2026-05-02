@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { BloomGlyph, ShieldHeartGlyph } from "@/components/icons/MindIcons";
@@ -15,23 +15,30 @@ export const Route = createFileRoute("/signup")({
 
 function SignupChoice() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { as } = Route.useSearch();
+  const isChoiceRoute = location.pathname === "/signup";
 
   // Backwards-compat: if someone lands on /signup?as=patient|expert, redirect them.
   useEffect(() => {
+    if (!isChoiceRoute) return;
     if (as === "patient") navigate({ to: "/signup/patient", replace: true });
     else if (as === "expert") navigate({ to: "/signup/expert", replace: true });
-  }, [as, navigate]);
+  }, [as, isChoiceRoute, navigate]);
+
+  if (!isChoiceRoute) {
+    return <Outlet />;
+  }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="relative min-h-screen overflow-hidden bg-background">
       <div
         aria-hidden
-        className="absolute inset-x-0 top-0 -z-10 h-[600px] opacity-60"
+        className="absolute inset-0 -z-10"
         style={{ backgroundImage: "var(--gradient-aurora)" }}
       />
       <SiteHeader />
-      <div className="container mx-auto px-4 py-16 md:py-24">
+      <div className="container mx-auto px-4 py-10 md:py-16">
         <div className="mx-auto max-w-3xl text-center">
           <span className="inline-block text-xs font-medium uppercase tracking-[0.2em] text-secondary">
             Bienvenue
@@ -50,7 +57,7 @@ function SignupChoice() {
           </p>
         </div>
 
-        <div className="mx-auto mt-10 grid max-w-4xl gap-5 sm:gap-6 sm:grid-cols-2">
+        <div className="mx-auto mt-10 grid max-w-4xl gap-5 sm:gap-6 md:grid-cols-2">
           <ChoiceCard
             to="/signup/patient"
             icon={<BloomGlyph size={36} />}
@@ -73,7 +80,7 @@ function SignupChoice() {
           />
         </div>
 
-        <p className="mt-10 text-center text-sm text-muted-foreground">
+        <p className="mt-8 text-center text-sm text-muted-foreground">
           Déjà inscrit·e ?{" "}
           <Link to="/login" className="font-medium text-primary hover:underline">
             Se connecter
@@ -111,7 +118,7 @@ function ChoiceCard({
     <Link
       to={to}
       aria-label={`${title} — ${ctaLabel}`}
-      className="group relative flex flex-col overflow-hidden rounded-3xl border border-border bg-card p-8 shadow-[var(--shadow-soft)] transition-all hover:-translate-y-1 hover:border-primary/30 hover:shadow-[var(--shadow-calm)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+      className="group relative flex flex-col overflow-hidden rounded-3xl border border-border/80 bg-card/95 p-6 shadow-[var(--shadow-soft)] transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-[var(--shadow-calm)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:p-8"
     >
       <div
         aria-hidden
@@ -153,8 +160,10 @@ function ChoiceCard({
         ))}
       </ul>
       <span
-        className={`relative mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold text-white shadow-[var(--shadow-calm)] transition-transform group-hover:scale-[1.02] ${
-          tone === "primary" ? "bg-primary" : "bg-secondary"
+        className={`relative mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold shadow-[var(--shadow-calm)] transition-transform group-hover:scale-[1.02] ${
+          tone === "primary"
+            ? "bg-primary text-primary-foreground"
+            : "bg-secondary text-secondary-foreground"
         }`}
       >
         {ctaLabel}
