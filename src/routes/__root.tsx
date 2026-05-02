@@ -32,10 +32,14 @@ export const Route = createRootRoute({
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "PsyConnect — Soutien psychologique en Afrique de l'Ouest" },
       { name: "description", content: "Plateforme d'aide psychologique : écoute IA bienveillante, experts validés (psychologues, psychiatres, coachs) et confidentialité." },
-      { property: "og:title", content: "PsyConnect — Parler. Être écouté. Guérir." },
-      { property: "og:description", content: "Une oreille, un expert, à portée de cœur." },
+      { property: "og:title", content: "PsyConnect — Soutien psychologique en Afrique de l'Ouest" },
+      { property: "og:description", content: "Plateforme d'aide psychologique : écoute IA bienveillante, experts validés (psychologues, psychiatres, coachs) et confidentialité." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { name: "twitter:title", content: "PsyConnect — Soutien psychologique en Afrique de l'Ouest" },
+      { name: "twitter:description", content: "Plateforme d'aide psychologique : écoute IA bienveillante, experts validés (psychologues, psychiatres, coachs) et confidentialité." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/6ed63510-bbbe-45e2-87ee-37cb1cf76cfb" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/6ed63510-bbbe-45e2-87ee-37cb1cf76cfb" },
     ],
     links: [
       {
