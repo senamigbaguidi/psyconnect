@@ -32,6 +32,7 @@ import { Route as ApiRealtimeTokenRouteImport } from './routes/api/realtime-toke
 import { Route as ApiConversationsRouteImport } from './routes/api/conversations'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AdminExpertsRouteImport } from './routes/admin.experts'
+import { Route as CommunitiesIdSettingsRouteImport } from './routes/communities.$id.settings'
 import { Route as ApiConversationsIdMessagesRouteImport } from './routes/api/conversations.$id.messages'
 
 const VoiceRoute = VoiceRouteImport.update({
@@ -149,6 +150,11 @@ const AdminExpertsRoute = AdminExpertsRouteImport.update({
   path: '/admin/experts',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CommunitiesIdSettingsRoute = CommunitiesIdSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => CommunitiesIdRoute,
+} as any)
 const ApiConversationsIdMessagesRoute =
   ApiConversationsIdMessagesRouteImport.update({
     id: '/$id/messages',
@@ -176,10 +182,11 @@ export interface FileRoutesByFullPath {
   '/api/conversations': typeof ApiConversationsRouteWithChildren
   '/api/realtime-token': typeof ApiRealtimeTokenRoute
   '/api/referrals': typeof ApiReferralsRoute
-  '/communities/$id': typeof CommunitiesIdRoute
+  '/communities/$id': typeof CommunitiesIdRouteWithChildren
   '/communities/new': typeof CommunitiesNewRoute
   '/signup/expert': typeof SignupExpertRoute
   '/signup/patient': typeof SignupPatientRoute
+  '/communities/$id/settings': typeof CommunitiesIdSettingsRoute
   '/api/conversations/$id/messages': typeof ApiConversationsIdMessagesRoute
 }
 export interface FileRoutesByTo {
@@ -202,10 +209,11 @@ export interface FileRoutesByTo {
   '/api/conversations': typeof ApiConversationsRouteWithChildren
   '/api/realtime-token': typeof ApiRealtimeTokenRoute
   '/api/referrals': typeof ApiReferralsRoute
-  '/communities/$id': typeof CommunitiesIdRoute
+  '/communities/$id': typeof CommunitiesIdRouteWithChildren
   '/communities/new': typeof CommunitiesNewRoute
   '/signup/expert': typeof SignupExpertRoute
   '/signup/patient': typeof SignupPatientRoute
+  '/communities/$id/settings': typeof CommunitiesIdSettingsRoute
   '/api/conversations/$id/messages': typeof ApiConversationsIdMessagesRoute
 }
 export interface FileRoutesById {
@@ -229,10 +237,11 @@ export interface FileRoutesById {
   '/api/conversations': typeof ApiConversationsRouteWithChildren
   '/api/realtime-token': typeof ApiRealtimeTokenRoute
   '/api/referrals': typeof ApiReferralsRoute
-  '/communities/$id': typeof CommunitiesIdRoute
+  '/communities/$id': typeof CommunitiesIdRouteWithChildren
   '/communities/new': typeof CommunitiesNewRoute
   '/signup/expert': typeof SignupExpertRoute
   '/signup/patient': typeof SignupPatientRoute
+  '/communities/$id/settings': typeof CommunitiesIdSettingsRoute
   '/api/conversations/$id/messages': typeof ApiConversationsIdMessagesRoute
 }
 export interface FileRouteTypes {
@@ -261,6 +270,7 @@ export interface FileRouteTypes {
     | '/communities/new'
     | '/signup/expert'
     | '/signup/patient'
+    | '/communities/$id/settings'
     | '/api/conversations/$id/messages'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -287,6 +297,7 @@ export interface FileRouteTypes {
     | '/communities/new'
     | '/signup/expert'
     | '/signup/patient'
+    | '/communities/$id/settings'
     | '/api/conversations/$id/messages'
   id:
     | '__root__'
@@ -313,6 +324,7 @@ export interface FileRouteTypes {
     | '/communities/new'
     | '/signup/expert'
     | '/signup/patient'
+    | '/communities/$id/settings'
     | '/api/conversations/$id/messages'
   fileRoutesById: FileRoutesById
 }
@@ -501,6 +513,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminExpertsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/communities/$id/settings': {
+      id: '/communities/$id/settings'
+      path: '/settings'
+      fullPath: '/communities/$id/settings'
+      preLoaderRoute: typeof CommunitiesIdSettingsRouteImport
+      parentRoute: typeof CommunitiesIdRoute
+    }
     '/api/conversations/$id/messages': {
       id: '/api/conversations/$id/messages'
       path: '/$id/messages'
@@ -511,13 +530,25 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface CommunitiesIdRouteChildren {
+  CommunitiesIdSettingsRoute: typeof CommunitiesIdSettingsRoute
+}
+
+const CommunitiesIdRouteChildren: CommunitiesIdRouteChildren = {
+  CommunitiesIdSettingsRoute: CommunitiesIdSettingsRoute,
+}
+
+const CommunitiesIdRouteWithChildren = CommunitiesIdRoute._addFileChildren(
+  CommunitiesIdRouteChildren,
+)
+
 interface CommunitiesRouteChildren {
-  CommunitiesIdRoute: typeof CommunitiesIdRoute
+  CommunitiesIdRoute: typeof CommunitiesIdRouteWithChildren
   CommunitiesNewRoute: typeof CommunitiesNewRoute
 }
 
 const CommunitiesRouteChildren: CommunitiesRouteChildren = {
-  CommunitiesIdRoute: CommunitiesIdRoute,
+  CommunitiesIdRoute: CommunitiesIdRouteWithChildren,
   CommunitiesNewRoute: CommunitiesNewRoute,
 }
 
