@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VoiceRouteImport } from './routes/voice'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as SearchRouteImport } from './routes/search'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HomeRouteImport } from './routes/home'
@@ -37,6 +38,11 @@ const VoiceRoute = VoiceRouteImport.update({
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OnboardingRoute = OnboardingRouteImport.update({
@@ -136,6 +142,7 @@ export interface FileRoutesByFullPath {
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
+  '/search': typeof SearchRoute
   '/signup': typeof SignupRouteWithChildren
   '/voice': typeof VoiceRoute
   '/admin/experts': typeof AdminExpertsRoute
@@ -157,6 +164,7 @@ export interface FileRoutesByTo {
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
+  '/search': typeof SearchRoute
   '/signup': typeof SignupRouteWithChildren
   '/voice': typeof VoiceRoute
   '/admin/experts': typeof AdminExpertsRoute
@@ -179,6 +187,7 @@ export interface FileRoutesById {
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
+  '/search': typeof SearchRoute
   '/signup': typeof SignupRouteWithChildren
   '/voice': typeof VoiceRoute
   '/admin/experts': typeof AdminExpertsRoute
@@ -202,6 +211,7 @@ export interface FileRouteTypes {
     | '/home'
     | '/login'
     | '/onboarding'
+    | '/search'
     | '/signup'
     | '/voice'
     | '/admin/experts'
@@ -223,6 +233,7 @@ export interface FileRouteTypes {
     | '/home'
     | '/login'
     | '/onboarding'
+    | '/search'
     | '/signup'
     | '/voice'
     | '/admin/experts'
@@ -244,6 +255,7 @@ export interface FileRouteTypes {
     | '/home'
     | '/login'
     | '/onboarding'
+    | '/search'
     | '/signup'
     | '/voice'
     | '/admin/experts'
@@ -266,6 +278,7 @@ export interface RootRouteChildren {
   HomeRoute: typeof HomeRoute
   LoginRoute: typeof LoginRoute
   OnboardingRoute: typeof OnboardingRoute
+  SearchRoute: typeof SearchRoute
   SignupRoute: typeof SignupRouteWithChildren
   VoiceRoute: typeof VoiceRoute
   AdminExpertsRoute: typeof AdminExpertsRoute
@@ -289,6 +302,13 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/onboarding': {
@@ -447,6 +467,7 @@ const rootRouteChildren: RootRouteChildren = {
   HomeRoute: HomeRoute,
   LoginRoute: LoginRoute,
   OnboardingRoute: OnboardingRoute,
+  SearchRoute: SearchRoute,
   SignupRoute: SignupRouteWithChildren,
   VoiceRoute: VoiceRoute,
   AdminExpertsRoute: AdminExpertsRoute,
