@@ -11,21 +11,28 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VoiceRouteImport } from './routes/voice'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as SearchRouteImport } from './routes/search'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as HomeRouteImport } from './routes/home'
 import { Route as FeedRouteImport } from './routes/feed'
 import { Route as ExpertsRouteImport } from './routes/experts'
 import { Route as ExpertRouteImport } from './routes/expert'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as CommunitiesRouteImport } from './routes/communities'
 import { Route as ChatRouteImport } from './routes/chat'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SignupPatientRouteImport } from './routes/signup.patient'
 import { Route as SignupExpertRouteImport } from './routes/signup.expert'
+import { Route as CommunitiesNewRouteImport } from './routes/communities.new'
+import { Route as CommunitiesIdRouteImport } from './routes/communities.$id'
 import { Route as ApiReferralsRouteImport } from './routes/api/referrals'
 import { Route as ApiRealtimeTokenRouteImport } from './routes/api/realtime-token'
 import { Route as ApiConversationsRouteImport } from './routes/api/conversations'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AdminExpertsRouteImport } from './routes/admin.experts'
+import { Route as CommunitiesIdSettingsRouteImport } from './routes/communities.$id.settings'
 import { Route as ApiConversationsIdMessagesRouteImport } from './routes/api/conversations.$id.messages'
 
 const VoiceRoute = VoiceRouteImport.update({
@@ -38,6 +45,16 @@ const SignupRoute = SignupRouteImport.update({
   path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
@@ -46,6 +63,11 @@ const OnboardingRoute = OnboardingRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HomeRoute = HomeRouteImport.update({
+  id: '/home',
+  path: '/home',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FeedRoute = FeedRouteImport.update({
@@ -68,6 +90,11 @@ const DashboardRoute = DashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CommunitiesRoute = CommunitiesRouteImport.update({
+  id: '/communities',
+  path: '/communities',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ChatRoute = ChatRouteImport.update({
   id: '/chat',
   path: '/chat',
@@ -87,6 +114,16 @@ const SignupExpertRoute = SignupExpertRouteImport.update({
   id: '/expert',
   path: '/expert',
   getParentRoute: () => SignupRoute,
+} as any)
+const CommunitiesNewRoute = CommunitiesNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => CommunitiesRoute,
+} as any)
+const CommunitiesIdRoute = CommunitiesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => CommunitiesRoute,
 } as any)
 const ApiReferralsRoute = ApiReferralsRouteImport.update({
   id: '/api/referrals',
@@ -113,6 +150,11 @@ const AdminExpertsRoute = AdminExpertsRouteImport.update({
   path: '/admin/experts',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CommunitiesIdSettingsRoute = CommunitiesIdSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => CommunitiesIdRoute,
+} as any)
 const ApiConversationsIdMessagesRoute =
   ApiConversationsIdMessagesRouteImport.update({
     id: '/$id/messages',
@@ -123,12 +165,16 @@ const ApiConversationsIdMessagesRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/chat': typeof ChatRoute
+  '/communities': typeof CommunitiesRouteWithChildren
   '/dashboard': typeof DashboardRoute
   '/expert': typeof ExpertRoute
   '/experts': typeof ExpertsRoute
   '/feed': typeof FeedRoute
+  '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
+  '/profile': typeof ProfileRoute
+  '/search': typeof SearchRoute
   '/signup': typeof SignupRouteWithChildren
   '/voice': typeof VoiceRoute
   '/admin/experts': typeof AdminExpertsRoute
@@ -136,19 +182,26 @@ export interface FileRoutesByFullPath {
   '/api/conversations': typeof ApiConversationsRouteWithChildren
   '/api/realtime-token': typeof ApiRealtimeTokenRoute
   '/api/referrals': typeof ApiReferralsRoute
+  '/communities/$id': typeof CommunitiesIdRouteWithChildren
+  '/communities/new': typeof CommunitiesNewRoute
   '/signup/expert': typeof SignupExpertRoute
   '/signup/patient': typeof SignupPatientRoute
+  '/communities/$id/settings': typeof CommunitiesIdSettingsRoute
   '/api/conversations/$id/messages': typeof ApiConversationsIdMessagesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/chat': typeof ChatRoute
+  '/communities': typeof CommunitiesRouteWithChildren
   '/dashboard': typeof DashboardRoute
   '/expert': typeof ExpertRoute
   '/experts': typeof ExpertsRoute
   '/feed': typeof FeedRoute
+  '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
+  '/profile': typeof ProfileRoute
+  '/search': typeof SearchRoute
   '/signup': typeof SignupRouteWithChildren
   '/voice': typeof VoiceRoute
   '/admin/experts': typeof AdminExpertsRoute
@@ -156,20 +209,27 @@ export interface FileRoutesByTo {
   '/api/conversations': typeof ApiConversationsRouteWithChildren
   '/api/realtime-token': typeof ApiRealtimeTokenRoute
   '/api/referrals': typeof ApiReferralsRoute
+  '/communities/$id': typeof CommunitiesIdRouteWithChildren
+  '/communities/new': typeof CommunitiesNewRoute
   '/signup/expert': typeof SignupExpertRoute
   '/signup/patient': typeof SignupPatientRoute
+  '/communities/$id/settings': typeof CommunitiesIdSettingsRoute
   '/api/conversations/$id/messages': typeof ApiConversationsIdMessagesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/chat': typeof ChatRoute
+  '/communities': typeof CommunitiesRouteWithChildren
   '/dashboard': typeof DashboardRoute
   '/expert': typeof ExpertRoute
   '/experts': typeof ExpertsRoute
   '/feed': typeof FeedRoute
+  '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
+  '/profile': typeof ProfileRoute
+  '/search': typeof SearchRoute
   '/signup': typeof SignupRouteWithChildren
   '/voice': typeof VoiceRoute
   '/admin/experts': typeof AdminExpertsRoute
@@ -177,8 +237,11 @@ export interface FileRoutesById {
   '/api/conversations': typeof ApiConversationsRouteWithChildren
   '/api/realtime-token': typeof ApiRealtimeTokenRoute
   '/api/referrals': typeof ApiReferralsRoute
+  '/communities/$id': typeof CommunitiesIdRouteWithChildren
+  '/communities/new': typeof CommunitiesNewRoute
   '/signup/expert': typeof SignupExpertRoute
   '/signup/patient': typeof SignupPatientRoute
+  '/communities/$id/settings': typeof CommunitiesIdSettingsRoute
   '/api/conversations/$id/messages': typeof ApiConversationsIdMessagesRoute
 }
 export interface FileRouteTypes {
@@ -186,12 +249,16 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/chat'
+    | '/communities'
     | '/dashboard'
     | '/expert'
     | '/experts'
     | '/feed'
+    | '/home'
     | '/login'
     | '/onboarding'
+    | '/profile'
+    | '/search'
     | '/signup'
     | '/voice'
     | '/admin/experts'
@@ -199,19 +266,26 @@ export interface FileRouteTypes {
     | '/api/conversations'
     | '/api/realtime-token'
     | '/api/referrals'
+    | '/communities/$id'
+    | '/communities/new'
     | '/signup/expert'
     | '/signup/patient'
+    | '/communities/$id/settings'
     | '/api/conversations/$id/messages'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/chat'
+    | '/communities'
     | '/dashboard'
     | '/expert'
     | '/experts'
     | '/feed'
+    | '/home'
     | '/login'
     | '/onboarding'
+    | '/profile'
+    | '/search'
     | '/signup'
     | '/voice'
     | '/admin/experts'
@@ -219,19 +293,26 @@ export interface FileRouteTypes {
     | '/api/conversations'
     | '/api/realtime-token'
     | '/api/referrals'
+    | '/communities/$id'
+    | '/communities/new'
     | '/signup/expert'
     | '/signup/patient'
+    | '/communities/$id/settings'
     | '/api/conversations/$id/messages'
   id:
     | '__root__'
     | '/'
     | '/chat'
+    | '/communities'
     | '/dashboard'
     | '/expert'
     | '/experts'
     | '/feed'
+    | '/home'
     | '/login'
     | '/onboarding'
+    | '/profile'
+    | '/search'
     | '/signup'
     | '/voice'
     | '/admin/experts'
@@ -239,20 +320,27 @@ export interface FileRouteTypes {
     | '/api/conversations'
     | '/api/realtime-token'
     | '/api/referrals'
+    | '/communities/$id'
+    | '/communities/new'
     | '/signup/expert'
     | '/signup/patient'
+    | '/communities/$id/settings'
     | '/api/conversations/$id/messages'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ChatRoute: typeof ChatRoute
+  CommunitiesRoute: typeof CommunitiesRouteWithChildren
   DashboardRoute: typeof DashboardRoute
   ExpertRoute: typeof ExpertRoute
   ExpertsRoute: typeof ExpertsRoute
   FeedRoute: typeof FeedRoute
+  HomeRoute: typeof HomeRoute
   LoginRoute: typeof LoginRoute
   OnboardingRoute: typeof OnboardingRoute
+  ProfileRoute: typeof ProfileRoute
+  SearchRoute: typeof SearchRoute
   SignupRoute: typeof SignupRouteWithChildren
   VoiceRoute: typeof VoiceRoute
   AdminExpertsRoute: typeof AdminExpertsRoute
@@ -278,6 +366,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/onboarding': {
       id: '/onboarding'
       path: '/onboarding'
@@ -290,6 +392,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/home': {
+      id: '/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof HomeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/feed': {
@@ -320,6 +429,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/communities': {
+      id: '/communities'
+      path: '/communities'
+      fullPath: '/communities'
+      preLoaderRoute: typeof CommunitiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/chat': {
       id: '/chat'
       path: '/chat'
@@ -347,6 +463,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/signup/expert'
       preLoaderRoute: typeof SignupExpertRouteImport
       parentRoute: typeof SignupRoute
+    }
+    '/communities/new': {
+      id: '/communities/new'
+      path: '/new'
+      fullPath: '/communities/new'
+      preLoaderRoute: typeof CommunitiesNewRouteImport
+      parentRoute: typeof CommunitiesRoute
+    }
+    '/communities/$id': {
+      id: '/communities/$id'
+      path: '/$id'
+      fullPath: '/communities/$id'
+      preLoaderRoute: typeof CommunitiesIdRouteImport
+      parentRoute: typeof CommunitiesRoute
     }
     '/api/referrals': {
       id: '/api/referrals'
@@ -383,6 +513,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminExpertsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/communities/$id/settings': {
+      id: '/communities/$id/settings'
+      path: '/settings'
+      fullPath: '/communities/$id/settings'
+      preLoaderRoute: typeof CommunitiesIdSettingsRouteImport
+      parentRoute: typeof CommunitiesIdRoute
+    }
     '/api/conversations/$id/messages': {
       id: '/api/conversations/$id/messages'
       path: '/$id/messages'
@@ -392,6 +529,32 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface CommunitiesIdRouteChildren {
+  CommunitiesIdSettingsRoute: typeof CommunitiesIdSettingsRoute
+}
+
+const CommunitiesIdRouteChildren: CommunitiesIdRouteChildren = {
+  CommunitiesIdSettingsRoute: CommunitiesIdSettingsRoute,
+}
+
+const CommunitiesIdRouteWithChildren = CommunitiesIdRoute._addFileChildren(
+  CommunitiesIdRouteChildren,
+)
+
+interface CommunitiesRouteChildren {
+  CommunitiesIdRoute: typeof CommunitiesIdRouteWithChildren
+  CommunitiesNewRoute: typeof CommunitiesNewRoute
+}
+
+const CommunitiesRouteChildren: CommunitiesRouteChildren = {
+  CommunitiesIdRoute: CommunitiesIdRouteWithChildren,
+  CommunitiesNewRoute: CommunitiesNewRoute,
+}
+
+const CommunitiesRouteWithChildren = CommunitiesRoute._addFileChildren(
+  CommunitiesRouteChildren,
+)
 
 interface SignupRouteChildren {
   SignupExpertRoute: typeof SignupExpertRoute
@@ -420,12 +583,16 @@ const ApiConversationsRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ChatRoute: ChatRoute,
+  CommunitiesRoute: CommunitiesRouteWithChildren,
   DashboardRoute: DashboardRoute,
   ExpertRoute: ExpertRoute,
   ExpertsRoute: ExpertsRoute,
   FeedRoute: FeedRoute,
+  HomeRoute: HomeRoute,
   LoginRoute: LoginRoute,
   OnboardingRoute: OnboardingRoute,
+  ProfileRoute: ProfileRoute,
+  SearchRoute: SearchRoute,
   SignupRoute: SignupRouteWithChildren,
   VoiceRoute: VoiceRoute,
   AdminExpertsRoute: AdminExpertsRoute,
@@ -437,12 +604,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
