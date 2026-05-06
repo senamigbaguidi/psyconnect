@@ -20,6 +20,7 @@ import { Route as FeedRouteImport } from './routes/feed'
 import { Route as ExpertsRouteImport } from './routes/experts'
 import { Route as ExpertRouteImport } from './routes/expert'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as CommunitiesRouteImport } from './routes/communities'
 import { Route as ChatRouteImport } from './routes/chat'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SignupPatientRouteImport } from './routes/signup.patient'
@@ -86,6 +87,11 @@ const DashboardRoute = DashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CommunitiesRoute = CommunitiesRouteImport.update({
+  id: '/communities',
+  path: '/communities',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ChatRoute = ChatRouteImport.update({
   id: '/chat',
   path: '/chat',
@@ -141,6 +147,7 @@ const ApiConversationsIdMessagesRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/chat': typeof ChatRoute
+  '/communities': typeof CommunitiesRoute
   '/dashboard': typeof DashboardRoute
   '/expert': typeof ExpertRoute
   '/experts': typeof ExpertsRoute
@@ -164,6 +171,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/chat': typeof ChatRoute
+  '/communities': typeof CommunitiesRoute
   '/dashboard': typeof DashboardRoute
   '/expert': typeof ExpertRoute
   '/experts': typeof ExpertsRoute
@@ -188,6 +196,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/chat': typeof ChatRoute
+  '/communities': typeof CommunitiesRoute
   '/dashboard': typeof DashboardRoute
   '/expert': typeof ExpertRoute
   '/experts': typeof ExpertsRoute
@@ -213,6 +222,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/chat'
+    | '/communities'
     | '/dashboard'
     | '/expert'
     | '/experts'
@@ -236,6 +246,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/chat'
+    | '/communities'
     | '/dashboard'
     | '/expert'
     | '/experts'
@@ -259,6 +270,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/chat'
+    | '/communities'
     | '/dashboard'
     | '/expert'
     | '/experts'
@@ -283,6 +295,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ChatRoute: typeof ChatRoute
+  CommunitiesRoute: typeof CommunitiesRoute
   DashboardRoute: typeof DashboardRoute
   ExpertRoute: typeof ExpertRoute
   ExpertsRoute: typeof ExpertsRoute
@@ -378,6 +391,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/communities': {
+      id: '/communities'
+      path: '/communities'
+      fullPath: '/communities'
+      preLoaderRoute: typeof CommunitiesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/chat': {
@@ -480,6 +500,7 @@ const ApiConversationsRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ChatRoute: ChatRoute,
+  CommunitiesRoute: CommunitiesRoute,
   DashboardRoute: DashboardRoute,
   ExpertRoute: ExpertRoute,
   ExpertsRoute: ExpertsRoute,
