@@ -13,6 +13,7 @@ import { Route as VoiceRouteImport } from './routes/voice'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as HomeRouteImport } from './routes/home'
 import { Route as FeedRouteImport } from './routes/feed'
 import { Route as ExpertsRouteImport } from './routes/experts'
 import { Route as ExpertRouteImport } from './routes/expert'
@@ -46,6 +47,11 @@ const OnboardingRoute = OnboardingRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HomeRoute = HomeRouteImport.update({
+  id: '/home',
+  path: '/home',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FeedRoute = FeedRouteImport.update({
@@ -127,6 +133,7 @@ export interface FileRoutesByFullPath {
   '/expert': typeof ExpertRoute
   '/experts': typeof ExpertsRoute
   '/feed': typeof FeedRoute
+  '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/signup': typeof SignupRouteWithChildren
@@ -147,6 +154,7 @@ export interface FileRoutesByTo {
   '/expert': typeof ExpertRoute
   '/experts': typeof ExpertsRoute
   '/feed': typeof FeedRoute
+  '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/signup': typeof SignupRouteWithChildren
@@ -168,6 +176,7 @@ export interface FileRoutesById {
   '/expert': typeof ExpertRoute
   '/experts': typeof ExpertsRoute
   '/feed': typeof FeedRoute
+  '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/signup': typeof SignupRouteWithChildren
@@ -190,6 +199,7 @@ export interface FileRouteTypes {
     | '/expert'
     | '/experts'
     | '/feed'
+    | '/home'
     | '/login'
     | '/onboarding'
     | '/signup'
@@ -210,6 +220,7 @@ export interface FileRouteTypes {
     | '/expert'
     | '/experts'
     | '/feed'
+    | '/home'
     | '/login'
     | '/onboarding'
     | '/signup'
@@ -230,6 +241,7 @@ export interface FileRouteTypes {
     | '/expert'
     | '/experts'
     | '/feed'
+    | '/home'
     | '/login'
     | '/onboarding'
     | '/signup'
@@ -251,6 +263,7 @@ export interface RootRouteChildren {
   ExpertRoute: typeof ExpertRoute
   ExpertsRoute: typeof ExpertsRoute
   FeedRoute: typeof FeedRoute
+  HomeRoute: typeof HomeRoute
   LoginRoute: typeof LoginRoute
   OnboardingRoute: typeof OnboardingRoute
   SignupRoute: typeof SignupRouteWithChildren
@@ -290,6 +303,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/home': {
+      id: '/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof HomeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/feed': {
@@ -424,6 +444,7 @@ const rootRouteChildren: RootRouteChildren = {
   ExpertRoute: ExpertRoute,
   ExpertsRoute: ExpertsRoute,
   FeedRoute: FeedRoute,
+  HomeRoute: HomeRoute,
   LoginRoute: LoginRoute,
   OnboardingRoute: OnboardingRoute,
   SignupRoute: SignupRouteWithChildren,
@@ -437,3 +458,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
