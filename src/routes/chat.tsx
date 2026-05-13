@@ -9,7 +9,7 @@ import { SOSDialog } from "@/components/SOSDialog";
 import { ConversationsSidebar } from "@/components/chat/ConversationsSidebar";
 import { ExpertRecommendations } from "@/components/chat/ExpertRecommendations";
 import { supabase } from "@/integrations/supabase/client";
-import { Sparkles, Send, AlertCircle, Loader2, Menu, X } from "lucide-react";
+import { Sparkles, Send, AlertCircle, Loader2, Menu, X, Mic, Square, Volume2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { toast } from "sonner";
 
@@ -22,6 +22,7 @@ type Msg = {
   role: "user" | "assistant";
   content: string;
   metadata?: { crisis_detected?: boolean; recommend_expert?: string | null };
+  voice?: { original: string; language: string };
 };
 
 const PAGE_SIZE = 20;
@@ -41,6 +42,13 @@ function ChatPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarRefreshKey, setSidebarRefreshKey] = useState(0);
   const [highlightId, setHighlightId] = useState<string | null>(null);
+  // Voice recording state
+  const [recording, setRecording] = useState(false);
+  const [transcribing, setTranscribing] = useState(false);
+  const [voiceLang, setVoiceLang] = useState<string | null>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
+  const ttsAudioRef = useRef<HTMLAudioElement | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const messageRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
@@ -151,11 +159,11 @@ function ChatPage() {
     stickyBottom.current = true;
   };
 
-  const send = async () => {
-    const text = input.trim();
+  const send = async (overrideText?: string, voiceMeta?: { original: string; language: string }) => {
+    const text = (overrideText ?? input).trim();
     if (!text || sending || !user) return;
-    setInput("");
-    setMessages((prev) => [...prev, { role: "user", content: text }]);
+    if (!overrideText) setInput("");
+    setMessages((prev) => [...prev, { role: "user", content: text, voice: voiceMeta }]);
     setSending(true);
     stickyBottom.current = true;
 
@@ -233,6 +241,14 @@ function ChatPage() {
       }
       void convId;
       if (crisis) setSosOpen(true);
+      // Si l'utilisateur a parlé dans une langue locale, on lit la réponse en TTS dans cette langue.
+      if (voiceMeta && assistantText) {
+        const cleanReply = assistantText
+          .replace(/\[\[CRISIS_DETECTED\]\]/g, "")
+          .replace(/\[\[RECOMMEND_EXPERT:[^\]]+\]\]/g, "")
+          .trim();
+        playTTS(cleanReply, voiceMeta.language).catch(() => { /* silencieux */ });
+      }
       // Rafraîchit la sidebar (nouvelle conversation ou maj last_message_at).
       setSidebarRefreshKey((k) => k + 1);
     } catch (e) {
@@ -241,6 +257,93 @@ function ChatPage() {
       setSending(false);
     }
   };
+
+  // ===== Voix : enregistrement + ASR + traduction + envoi =====
+  const startRecording = async () => {
+    if (recording || transcribing || sending) return;
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mr = new MediaRecorder(stream);
+      chunksRef.current = [];
+      mr.ondataavailable = (e) => {
+        if (e.data.size > 0) chunksRef.current.push(e.data);
+      };
+      mr.onstop = async () => {
+        stream.getTracks().forEach((t) => t.stop());
+        const blob = new Blob(chunksRef.current, { type: mr.mimeType || "audio/webm" });
+        await handleAudioBlob(blob);
+      };
+      mediaRecorderRef.current = mr;
+      mr.start();
+      setRecording(true);
+    } catch (e) {
+      toast.error("Micro indisponible. Vérifiez les permissions.");
+      console.error(e);
+    }
+  };
+
+  const stopRecording = () => {
+    const mr = mediaRecorderRef.current;
+    if (mr && mr.state !== "inactive") mr.stop();
+    setRecording(false);
+  };
+
+  const handleAudioBlob = async (blob: Blob) => {
+    setTranscribing(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const form = new FormData();
+      const ext = blob.type.includes("ogg") ? "ogg" : blob.type.includes("mp4") ? "mp4" : "webm";
+      form.append("file", blob, `voice.${ext}`);
+      const resp = await fetch("/api/voice-transcribe", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${session?.access_token ?? ""}` },
+        body: form,
+      });
+      if (!resp.ok) {
+        const j = await resp.json().catch(() => ({ error: "Erreur" }));
+        toast.error(j.error ?? "Transcription échouée");
+        return;
+      }
+      const { text, language, frenchText } = (await resp.json()) as {
+        text: string; language: string; frenchText: string;
+      };
+      if (!frenchText) {
+        toast.error("Aucune parole détectée");
+        return;
+      }
+      setVoiceLang(language);
+      // Envoie la version FR au bot, en gardant la version originale visible côté UI.
+      await send(frenchText, { original: text, language });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erreur audio");
+    } finally {
+      setTranscribing(false);
+    }
+  };
+
+  const playTTS = async (text: string, language: string) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const resp = await fetch("/api/voice-tts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.access_token ?? ""}`,
+        },
+        body: JSON.stringify({ text, language }),
+      });
+      if (!resp.ok) return;
+      const buf = await resp.arrayBuffer();
+      const url = URL.createObjectURL(new Blob([buf], { type: resp.headers.get("content-type") || "audio/mpeg" }));
+      if (!ttsAudioRef.current) ttsAudioRef.current = new Audio();
+      ttsAudioRef.current.src = url;
+      await ttsAudioRef.current.play().catch(() => { /* autoplay bloqué */ });
+    } catch (e) {
+      console.error("TTS error", e);
+    }
+  };
+  void voiceLang;
 
   if (loading || !user) {
     return <div className="flex min-h-screen items-center justify-center text-muted-foreground">Chargement...</div>;
@@ -375,7 +478,17 @@ function ChatPage() {
                       <ReactMarkdown>{m.content || "…"}</ReactMarkdown>
                     </div>
                   ) : (
-                    <p className="whitespace-pre-wrap">{m.content}</p>
+                    <div>
+                      {m.voice?.original && (
+                        <p className="mb-1 whitespace-pre-wrap text-xs opacity-80">
+                          <span className="mr-1 rounded bg-primary-foreground/15 px-1.5 py-0.5 text-[10px] uppercase tracking-wide">
+                            {m.voice.language}
+                          </span>
+                          {m.voice.original}
+                        </p>
+                      )}
+                      <p className="whitespace-pre-wrap">{m.content}</p>
+                    </div>
                   )}
                   {m.role === "assistant" && m.metadata?.recommend_expert && (
                     <ExpertRecommendations
@@ -409,12 +522,39 @@ function ChatPage() {
                 placeholder="Écrivez ce que vous ressentez…"
                 rows={1}
                 className="min-h-[44px] resize-none"
-                disabled={sending}
+                disabled={sending || recording || transcribing}
               />
-              <Button onClick={send} disabled={sending || !input.trim()} size="icon" className="h-11 w-11 shrink-0">
+              <Button
+                type="button"
+                onClick={recording ? stopRecording : startRecording}
+                disabled={sending || transcribing}
+                size="icon"
+                variant={recording ? "destructive" : "outline"}
+                className="h-11 w-11 shrink-0"
+                aria-label={recording ? "Arrêter l'enregistrement" : "Enregistrer un message vocal"}
+                title={recording ? "Arrêter" : "Parler dans votre langue"}
+              >
+                {transcribing ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : recording ? (
+                  <Square className="h-4 w-4" />
+                ) : (
+                  <Mic className="h-4 w-4" />
+                )}
+              </Button>
+              <Button onClick={() => send()} disabled={sending || !input.trim() || recording || transcribing} size="icon" className="h-11 w-11 shrink-0">
                 <Send className="h-4 w-4" />
               </Button>
             </div>
+            {(recording || transcribing) && (
+              <p className="mt-2 flex items-center gap-1 text-xs text-primary">
+                {recording ? (
+                  <><Volume2 className="h-3 w-3 animate-pulse" /> Enregistrement… appuyez sur stop quand vous avez fini.</>
+                ) : (
+                  <><Loader2 className="h-3 w-3 animate-spin" /> Transcription et traduction en cours…</>
+                )}
+              </p>
+            )}
             <p className="mt-2 text-xs text-muted-foreground">
               PsyBot n'est pas un thérapeute. En cas d'urgence, appelez le <button onClick={() => setSosOpen(true)} className="font-medium text-destructive underline">136</button>.
             </p>
