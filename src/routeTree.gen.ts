@@ -27,6 +27,8 @@ import { Route as SignupPatientRouteImport } from './routes/signup.patient'
 import { Route as SignupExpertRouteImport } from './routes/signup.expert'
 import { Route as CommunitiesNewRouteImport } from './routes/communities.new'
 import { Route as CommunitiesIdRouteImport } from './routes/communities.$id'
+import { Route as ApiVoiceTtsRouteImport } from './routes/api/voice-tts'
+import { Route as ApiVoiceTranscribeRouteImport } from './routes/api/voice-transcribe'
 import { Route as ApiReferralsRouteImport } from './routes/api/referrals'
 import { Route as ApiRealtimeTokenRouteImport } from './routes/api/realtime-token'
 import { Route as ApiConversationsRouteImport } from './routes/api/conversations'
@@ -125,6 +127,16 @@ const CommunitiesIdRoute = CommunitiesIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => CommunitiesRoute,
 } as any)
+const ApiVoiceTtsRoute = ApiVoiceTtsRouteImport.update({
+  id: '/api/voice-tts',
+  path: '/api/voice-tts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiVoiceTranscribeRoute = ApiVoiceTranscribeRouteImport.update({
+  id: '/api/voice-transcribe',
+  path: '/api/voice-transcribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiReferralsRoute = ApiReferralsRouteImport.update({
   id: '/api/referrals',
   path: '/api/referrals',
@@ -182,6 +194,8 @@ export interface FileRoutesByFullPath {
   '/api/conversations': typeof ApiConversationsRouteWithChildren
   '/api/realtime-token': typeof ApiRealtimeTokenRoute
   '/api/referrals': typeof ApiReferralsRoute
+  '/api/voice-transcribe': typeof ApiVoiceTranscribeRoute
+  '/api/voice-tts': typeof ApiVoiceTtsRoute
   '/communities/$id': typeof CommunitiesIdRouteWithChildren
   '/communities/new': typeof CommunitiesNewRoute
   '/signup/expert': typeof SignupExpertRoute
@@ -209,6 +223,8 @@ export interface FileRoutesByTo {
   '/api/conversations': typeof ApiConversationsRouteWithChildren
   '/api/realtime-token': typeof ApiRealtimeTokenRoute
   '/api/referrals': typeof ApiReferralsRoute
+  '/api/voice-transcribe': typeof ApiVoiceTranscribeRoute
+  '/api/voice-tts': typeof ApiVoiceTtsRoute
   '/communities/$id': typeof CommunitiesIdRouteWithChildren
   '/communities/new': typeof CommunitiesNewRoute
   '/signup/expert': typeof SignupExpertRoute
@@ -237,6 +253,8 @@ export interface FileRoutesById {
   '/api/conversations': typeof ApiConversationsRouteWithChildren
   '/api/realtime-token': typeof ApiRealtimeTokenRoute
   '/api/referrals': typeof ApiReferralsRoute
+  '/api/voice-transcribe': typeof ApiVoiceTranscribeRoute
+  '/api/voice-tts': typeof ApiVoiceTtsRoute
   '/communities/$id': typeof CommunitiesIdRouteWithChildren
   '/communities/new': typeof CommunitiesNewRoute
   '/signup/expert': typeof SignupExpertRoute
@@ -266,6 +284,8 @@ export interface FileRouteTypes {
     | '/api/conversations'
     | '/api/realtime-token'
     | '/api/referrals'
+    | '/api/voice-transcribe'
+    | '/api/voice-tts'
     | '/communities/$id'
     | '/communities/new'
     | '/signup/expert'
@@ -293,6 +313,8 @@ export interface FileRouteTypes {
     | '/api/conversations'
     | '/api/realtime-token'
     | '/api/referrals'
+    | '/api/voice-transcribe'
+    | '/api/voice-tts'
     | '/communities/$id'
     | '/communities/new'
     | '/signup/expert'
@@ -320,6 +342,8 @@ export interface FileRouteTypes {
     | '/api/conversations'
     | '/api/realtime-token'
     | '/api/referrals'
+    | '/api/voice-transcribe'
+    | '/api/voice-tts'
     | '/communities/$id'
     | '/communities/new'
     | '/signup/expert'
@@ -348,6 +372,8 @@ export interface RootRouteChildren {
   ApiConversationsRoute: typeof ApiConversationsRouteWithChildren
   ApiRealtimeTokenRoute: typeof ApiRealtimeTokenRoute
   ApiReferralsRoute: typeof ApiReferralsRoute
+  ApiVoiceTranscribeRoute: typeof ApiVoiceTranscribeRoute
+  ApiVoiceTtsRoute: typeof ApiVoiceTtsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -478,6 +504,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CommunitiesIdRouteImport
       parentRoute: typeof CommunitiesRoute
     }
+    '/api/voice-tts': {
+      id: '/api/voice-tts'
+      path: '/api/voice-tts'
+      fullPath: '/api/voice-tts'
+      preLoaderRoute: typeof ApiVoiceTtsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/voice-transcribe': {
+      id: '/api/voice-transcribe'
+      path: '/api/voice-transcribe'
+      fullPath: '/api/voice-transcribe'
+      preLoaderRoute: typeof ApiVoiceTranscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/referrals': {
       id: '/api/referrals'
       path: '/api/referrals'
@@ -600,6 +640,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiConversationsRoute: ApiConversationsRouteWithChildren,
   ApiRealtimeTokenRoute: ApiRealtimeTokenRoute,
   ApiReferralsRoute: ApiReferralsRoute,
+  ApiVoiceTranscribeRoute: ApiVoiceTranscribeRoute,
+  ApiVoiceTtsRoute: ApiVoiceTtsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
